@@ -7,11 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeAssemblyLoading", "R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginBase", "PluginBase\PluginBase.csproj", "{04535B3C-443C-43C1-BA0F-7AC4E1AAD25F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewardPluginA", "RewardPluginA\RewardPluginA.csproj", "{CFD5396E-4FBC-4AF5-83E1-9CF40C0E4250}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginA", "PluginA\PluginA.csproj", "{CFD5396E-4FBC-4AF5-83E1-9CF40C0E4250}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewardPluginB", "RewardPluginB\RewardPluginB.csproj", "{5F196859-9B83-452D-96B0-1ED77B7140F4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0690D192-309E-4DBC-9BCF-EF3ECD8F65B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginB", "PluginB\PluginB.csproj", "{5F196859-9B83-452D-96B0-1ED77B7140F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

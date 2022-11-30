@@ -1,24 +1,26 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 
-using PluginBase;
+using PluginBase.Abstractions;
 
-namespace RuntimeAssemblyLoading;
+namespace RuntimeAssemblyLoading.Services.Plugin;
+
 public class PluginContext : AssemblyLoadContext
 {
     private readonly Assembly? assembly;
     private readonly Type? type;
 
-    private readonly IReward? instance;
+    private readonly IPlugin? instance;
     private AssemblyDependencyResolver _resolver;
 
-    public PluginContext(string pluginPath, string pluginAssemblyName, string typeName)
+    public PluginContext(string pluginPath, string pluginAssemblyName, string typeName, IPluginHostApplication pluginHostApplication)
     {
         var fullPathToPlugin = pluginPath + pluginAssemblyName;
-        _resolver = new AssemblyDependencyResolver(fullPathToPlugin);
-        Console.WriteLine($"Loading assembly from: {fullPathToPlugin}");
+        Console.WriteLine($"Loading assembly from: \n{fullPathToPlugin}");
 
-        assembly = this.LoadFromAssemblyName(AssemblyName.GetAssemblyName(fullPathToPlugin));
+        _resolver = new AssemblyDependencyResolver(fullPathToPlugin);
+
+        assembly = LoadFromAssemblyName(AssemblyName.GetAssemblyName(fullPathToPlugin));
         if (assembly == null)
         {
             throw new Exception("Assembly not found");
@@ -31,15 +33,17 @@ public class PluginContext : AssemblyLoadContext
             throw new Exception("Type not found");
         }
 
-        instance = Activator.CreateInstance(type) as IReward;
+        instance = Activator.CreateInstance(type) as IPlugin;
 
         if (instance == null)
         {
             throw new Exception("Instance could not be created not found");
         }
+
+        instance.Application = pluginHostApplication;
     }
 
-    public IReward? GetInstance()
+    public IPlugin? GetInstance()
     {
         return instance;
     }
@@ -89,27 +93,16 @@ public class PluginContext : AssemblyLoadContext
     }
 
     #region Overrides
-    //https://learn.microsoft.com/en-us/dotnet/core/tutorials/creating-app-with-plugin-support
+    
     protected override Assembly Load(AssemblyName assemblyName)
     {
-        string assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+        var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
         if (assemblyPath != null)
         {
             return LoadFromAssemblyPath(assemblyPath);
         }
 
         return null;
-    }
-
-    protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
-    {
-        string libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
-        if (libraryPath != null)
-        {
-            return LoadUnmanagedDllFromPath(libraryPath);
-        }
-
-        return IntPtr.Zero;
     }
 
     #endregion
