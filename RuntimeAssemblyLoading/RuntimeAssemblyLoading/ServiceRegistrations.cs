@@ -5,7 +5,6 @@ using AutoMapper;
 
 using FluentValidation.AspNetCore;
 
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -18,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 using RuntimeAssemblyLoading.Abstractions;
+using RuntimeAssemblyLoading.Diagnostics;
 using RuntimeAssemblyLoading.Helpers;
 using RuntimeAssemblyLoading.Services;
 using RuntimeAssemblyLoading.Services.Plugin;
@@ -27,6 +27,7 @@ using Serilog;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+using Unibet.Infrastructure.Caching.CouchbaseV7;
 using Unibet.Infrastructure.Hosting.WebApi.Configuration;
 using Unibet.Infrastructure.Hosting.WebApi.Filters;
 using Unibet.Infrastructure.Hosting.WebApi.Health;
@@ -34,7 +35,7 @@ using Unibet.Infrastructure.Hosting.WebApi.Health;
 namespace RuntimeAssemblyLoading;
 public static class ServiceRegistrations
 {
-    public static void ConfigureServices(this IServiceCollection services, bool shouldRunMigrationPathway)
+    public static void ConfigureServices(this IServiceCollection services, IConfiguration config, bool shouldRunMigrationPathway)
     {
         //No DbContext, No Couchbase, No Kafka - they should be loaded by their respective plugins. 
         services.AddControllers(x => x.AllowEmptyInputInBodyModelBinding = true)
@@ -67,6 +68,9 @@ public static class ServiceRegistrations
         .AddFluentValidation()
         .AddControllersAsServices();
 
+        services.AddKspCouchbase7(config)
+            .EnableMigrations(config);
+
         services.AddModelMappings();
         services.AddRestClientWrapper();
         services.AddSwaggerRegistrations();
@@ -79,6 +83,7 @@ public static class ServiceRegistrations
         return builder.UseSerilog((ctx, conf) =>
         {
             conf.ReadFrom.Configuration(ctx.Configuration);
+            conf.WriteTo.ColoredConsole();
         });
     }
 

@@ -4,72 +4,73 @@ using Microsoft.Extensions.Logging;
 using PluginBase.Abstractions;
 using PluginBase.Enums;
 
-namespace PluginA;
+namespace PostGreSQLPlugin;
 public class Main : IPlugin
 {
-    public string Name => "Freebet-A";
+    public string Name => $"Freebet-B";
 
     public IPluginHostApplication Application { get; set; } = null!;
+
     public IServiceProvider ServiceProvider { get; set; } = null!;
 
     public State State { get; private set; }
 
-    public void Migrate(IConfiguration configuration)
+    public async Task Migrate(IServiceProvider serviceProvider)
     {
         this.State = State.Starting;
 
         GetLogger()?.LogInformation($"{this.Name} migrating");
 
-        OnMigrateComplete();
+        await OnMigrateComplete();
     }
 
-    public void OnMigrateComplete()
+    public async Task OnMigrateComplete()
     {
         this.State = State.Started;
 
         GetLogger()?.LogInformation($"{this.Name} has migrated");
 
-        this.Application.PluginMigrationCompleted(this);
+        await this.Application.PluginMigrationCompleted(this);
     }
 
-    public void OnStarted()
+    public async Task OnStarted()
     {
         this.State = State.Started;
 
         GetLogger()?.LogInformation($"{this.Name} has started");
 
-        this.Application.PluginStartCompleted(this);
+        await this.Application.PluginStartCompleted(this);
     }
 
-    public void OnStopped()
+    public async Task OnStopped()
     {
         this.State = State.Stopped;
 
         GetLogger()?.LogInformation($"{this.Name} has stopped");
 
-        this.Application.PluginStopCompleted(this);
+        await this.Application.PluginStopCompleted(this);
     }
 
-    public void Start(IConfiguration configuration)
+    public async Task Start()
     {
         this.State = State.Starting;
 
         GetLogger()?.LogInformation($"{this.Name} is starting");
 
-        OnStarted();
+        await OnStarted();
     }
 
-    public void Stop()
+    public async Task Stop()
     {
         this.State = State.Stopping;
 
         GetLogger()?.LogInformation($"{this.Name} is stopping");
 
-        OnStopped();
+        await OnStopped();
     }
 
     private ILogger? GetLogger()
-    {      
+    {
         return (ILogger<Main>?)ServiceProvider.GetService(typeof(ILogger<Main>));
     }
 }

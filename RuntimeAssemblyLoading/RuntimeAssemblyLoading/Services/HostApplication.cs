@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -70,12 +71,12 @@ public class HostApplication : IHostedService, IPluginHostApplication
         }
         catch (Exception ex)
         {
-            _logger.LogWarning($"FATAL: \n{ex.Message}");
+            _logger.LogWarning($"FATAL: {{@ex}}", ex);
 
             var innerException = ex.InnerException;
             while (innerException != null)
             {
-                _logger.LogWarning($"FATAL: \n{innerException.Message}");
+                _logger.LogWarning($"FATAL: {{@innerException}}", innerException);
 
                 innerException = innerException.InnerException;
             }
@@ -92,18 +93,24 @@ public class HostApplication : IHostedService, IPluginHostApplication
         _logger.LogInformation("OnStopped - Application");
     }
 
-    public void PluginStartCompleted(IPlugin plugin)
+    public async Task PluginStartCompleted(IPlugin plugin)
     {
         _logger.LogInformation($"PluginStartCompleted - {plugin.Name}");
+
+        await Task.CompletedTask;
     }
 
-    public void PluginStopCompleted(IPlugin plugin)
+    public async Task PluginStopCompleted(IPlugin plugin)
     {
         _logger.LogInformation($"PluginStopCompleted - {plugin.Name}");
+        
+        await Task.CompletedTask;
     }
 
-    public void PluginMigrationCompleted(IPlugin plugin)
+    public async Task PluginMigrationCompleted(IPlugin plugin)
     {
         _logger.LogInformation($"PluginMigrationCompleted - {plugin.Name}");
+        
+        await Task.CompletedTask;
     }
 }

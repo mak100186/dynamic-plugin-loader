@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using RuntimeAssemblyLoading;
@@ -12,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureSerilog();
 
 var shouldRunMigrationPathway = args.Contains("--migrate");
-builder.Services.ConfigureServices(shouldRunMigrationPathway);
+builder.Services.ConfigureServices(builder.Configuration, shouldRunMigrationPathway);
 
 var app = builder.Build();
 
@@ -34,6 +35,7 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
+
 
 
 /*

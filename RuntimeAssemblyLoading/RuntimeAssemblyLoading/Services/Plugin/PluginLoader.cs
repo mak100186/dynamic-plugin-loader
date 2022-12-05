@@ -62,11 +62,11 @@ public class PluginLoader : IPluginLoader
 
             if (File.Exists(assemblyName))
             {
-                _logger.LogInformation($"Specified file exists. \n[{assemblyName}]");
+                _logger.LogInformation($"Specified file exists. [{assemblyName}]");
             }
             else
             {
-                throw new Exception($"Specified file does not exist. \n[{assemblyName}]");
+                throw new Exception($"Specified file does not exist. [{assemblyName}]");
             }
         }
 
@@ -82,7 +82,7 @@ public class PluginLoader : IPluginLoader
             var pluginContext = new PluginContext(_assemblyPath, pluginDefinition.AssemblyName, pluginDefinition.Name, pluginHostApplication, _serviceProvider);
             Plugins.Add(pluginContext);
 
-            _logger.LogInformation($"Plugin Loaded: \n{pluginContext.InvokeProperty<string>("Name")}");
+            _logger.LogInformation($"Plugin Loaded: {pluginContext.InvokeProperty<string>("Name")}");
         }
     }
 
@@ -90,7 +90,8 @@ public class PluginLoader : IPluginLoader
     {
         foreach (var pluginContext in Plugins)
         {
-            pluginContext.GetInstance()?.Start(_configuration);
+            pluginContext.GetInstance()?.Start()
+                .GetAwaiter().GetResult();
         }
     }
 
@@ -98,7 +99,8 @@ public class PluginLoader : IPluginLoader
     {
         foreach (var pluginContext in Plugins)
         {
-            pluginContext.GetInstance()?.Migrate(_configuration);
+            pluginContext.GetInstance()?.Migrate(this._serviceProvider)
+                .GetAwaiter().GetResult();
         }
     }
 
@@ -106,7 +108,8 @@ public class PluginLoader : IPluginLoader
     {
         foreach (var pluginContext in Plugins)
         {
-            pluginContext.GetInstance()?.Stop();
+            pluginContext.GetInstance()?.Stop()
+                .GetAwaiter().GetResult();
         }
     }
 

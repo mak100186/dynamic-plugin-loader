@@ -31,13 +31,14 @@
     <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.3" />
+    <PackageReference Include="Unibet.Infrastructure.Caching.CouchbaseV7" Version="5.0.20" />
     <PackageReference Include="Unibet.Infrastructure.Core.Extensions" Version="3.1.33" />
     <PackageReference Include="Unibet.Infrastructure.Hosting.WebApi" Version="3.1.22" />
     <PackageReference Include="Unibet.Infrastructure.Hosting.WebApi.DependencyInjection" Version="2.0.39" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PluginBase\PluginBase.csproj" />
+    <ProjectReference Include="..\Plugins\PluginBase\PluginBase.csproj" />
   </ItemGroup>
 
 </Project>

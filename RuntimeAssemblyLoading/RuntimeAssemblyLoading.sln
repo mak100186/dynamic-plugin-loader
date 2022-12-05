@@ -5,11 +5,15 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeAssemblyLoading", "RuntimeAssemblyLoading\RuntimeAssemblyLoading.csproj", "{F7FF2038-5924-431A-BB24-C36063A8DE84}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginBase", "PluginBase\PluginBase.csproj", "{04535B3C-443C-43C1-BA0F-7AC4E1AAD25F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginBase", "Plugins\PluginBase\PluginBase.csproj", "{04535B3C-443C-43C1-BA0F-7AC4E1AAD25F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginA", "PluginA\PluginA.csproj", "{CFD5396E-4FBC-4AF5-83E1-9CF40C0E4250}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CouchbasePlugin", "Plugins\Couchbase\CouchbasePlugin.csproj", "{CFD5396E-4FBC-4AF5-83E1-9CF40C0E4250}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginB", "PluginB\PluginB.csproj", "{5F196859-9B83-452D-96B0-1ED77B7140F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostGreSQLPlugin", "Plugins\PostGreSQL\PostGreSQLPlugin.csproj", "{5F196859-9B83-452D-96B0-1ED77B7140F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{59B37BC2-A757-46C8-A9A6-0C33BFAC5F9F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{61D60882-DFDC-4475-88DA-6DDDE528668C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +40,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{04535B3C-443C-43C1-BA0F-7AC4E1AAD25F} = {61D60882-DFDC-4475-88DA-6DDDE528668C}
+		{CFD5396E-4FBC-4AF5-83E1-9CF40C0E4250} = {59B37BC2-A757-46C8-A9A6-0C33BFAC5F9F}
+		{5F196859-9B83-452D-96B0-1ED77B7140F4} = {59B37BC2-A757-46C8-A9A6-0C33BFAC5F9F}
+		{61D60882-DFDC-4475-88DA-6DDDE528668C} = {59B37BC2-A757-46C8-A9A6-0C33BFAC5F9F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EFD61D26-ECB8-4305-940B-3DA1915F5862}

@@ -4,7 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<_OutputCopyLocation>$(OutputPath)..\RuntimeAssemblyLoading\bin\Debug\net6.0\</_OutputCopyLocation>
+		<_OutputCopyLocation>$(OutputPath)..\..\RuntimeAssemblyLoading\bin\Debug\net6.0\</_OutputCopyLocation>
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 	</PropertyGroup>
 
@@ -17,7 +17,7 @@
 			<Private>false</Private>
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</ProjectReference>
-	</ItemGroup>
+	</ItemGroup>	
 
 	<Target Name="CustomAfterBuild" AfterTargets="Build">
 		<ItemGroup>
@@ -29,6 +29,5 @@
 
 		<Copy SourceFiles="@(_FilesToCopy)" DestinationFiles="@(_FilesToCopy->'$(_OutputCopyLocation)%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
-
 
 </Project>

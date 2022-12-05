@@ -10,17 +10,17 @@ public interface IPlugin
 
     State State { get; }
 
-    void Migrate(IConfiguration configuration);
+    Task Migrate(IServiceProvider serviceProvider);
 
-    void OnMigrateComplete();
+    Task OnMigrateComplete();
 
-    void Start(IConfiguration configuration);
+    Task Start();
 
-    void OnStarted();
+    Task OnStarted();
 
-    void Stop();
+    Task Stop();
 
-    void OnStopped();
+    Task OnStopped();
 
     IPluginHostApplication Application { get; set; }
 
