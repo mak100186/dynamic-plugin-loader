@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "RuntimeAssemblyLoading": {
+      "commandName": "Project"
+    },
+    "Migrate": {
+      "commandName": "Project",
+      "commandLineArgs": "--migrate"
+    }
+  }
+}

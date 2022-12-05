@@ -1,42 +1,47 @@
 ﻿using System.Reflection;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
+using RuntimeAssemblyLoading.Abstractions;
 
 namespace RuntimeAssemblyLoading.Services.Plugin;
 
-public class PluginLoader
+public class PluginLoader : IPluginLoader
 {
-    public ICollection<PluginDefinition> PluginDefinitions { get; private set; } = null!;
-    public List<PluginContext> Plugins { get; private set; } = null!;
+    private ICollection<PluginDefinition> PluginDefinitions { get; set; } = null!;
+    public List<PluginContext> Plugins { get; private set; } = new List<PluginContext>();
 
     private readonly string _assemblyPath;
     private readonly IConfiguration _configuration;
+    private readonly ILogger _logger;
+    private readonly IServiceProvider _serviceProvider;
 
-    public PluginLoader(IConfiguration configuration)
+    public PluginLoader(IConfiguration configuration, ILogger<PluginLoader> logger, IServiceProvider serviceProvider)
     {
-        Plugins = new List<PluginContext>();
+        var currentAssembly = Assembly.GetCallingAssembly();
+
+        _assemblyPath = currentAssembly.Location.Replace(currentAssembly.ManifestModule.Name, string.Empty);
+        _logger = logger;
+        _configuration = configuration;
+        _serviceProvider = serviceProvider;
+
         PluginDefinitions = configuration
             .GetSection("appSettings:plugins")
             .GetChildren()
             .Select(x => new PluginDefinition { Name = x.GetValue<string>("name"), AssemblyName = x.GetValue<string>("assemblyName") })
             .ToList();
-
-        var currentAssembly = Assembly.GetCallingAssembly();
-        _assemblyPath = currentAssembly.Location.Replace(currentAssembly.ManifestModule.Name, string.Empty);
-
-        _configuration = configuration;
     }
 
     public void ValidatePlugins()
-    {
-        Console.WriteLine("Validating plugin configurations");
+    {        
+        _logger.LogInformation("Validating plugin configurations");
 
         //uniqueness
         if (PluginDefinitions.Count == 0)
         {
-            Console.WriteLine("Nothing to validate");
+            _logger.LogInformation("Nothing to validate");
             return;
         }
 
@@ -57,7 +62,7 @@ public class PluginLoader
 
             if (File.Exists(assemblyName))
             {
-                Console.WriteLine($"Specified file exists. \n[{assemblyName}]");
+                _logger.LogInformation($"Specified file exists. \n[{assemblyName}]");
             }
             else
             {
@@ -65,17 +70,19 @@ public class PluginLoader
             }
         }
 
-        Console.WriteLine("No validation issues found");
+        _logger.LogInformation("No validation issues found");
     }
 
     public void LoadPlugins(IPluginHostApplication pluginHostApplication)
     {
         foreach (var pluginDefinition in PluginDefinitions)
         {
-            var pluginContext = new PluginContext(_assemblyPath, pluginDefinition.AssemblyName, pluginDefinition.Name, pluginHostApplication);
+            _logger.LogInformation($"Loading plugin:{_assemblyPath + pluginDefinition.AssemblyName}");
+
+            var pluginContext = new PluginContext(_assemblyPath, pluginDefinition.AssemblyName, pluginDefinition.Name, pluginHostApplication, _serviceProvider);
             Plugins.Add(pluginContext);
 
-            Console.WriteLine($"Plugin Loaded: \n{pluginContext.InvokeProperty<string>("Name")}");
+            _logger.LogInformation($"Plugin Loaded: \n{pluginContext.InvokeProperty<string>("Name")}");
         }
     }
 
@@ -84,6 +91,14 @@ public class PluginLoader
         foreach (var pluginContext in Plugins)
         {
             pluginContext.GetInstance()?.Start(_configuration);
+        }
+    }
+
+    public void Migrate()
+    {
+        foreach (var pluginContext in Plugins)
+        {
+            pluginContext.GetInstance()?.Migrate(_configuration);
         }
     }
 

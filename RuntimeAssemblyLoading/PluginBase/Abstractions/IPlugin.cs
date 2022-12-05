@@ -10,6 +10,10 @@ public interface IPlugin
 
     State State { get; }
 
+    void Migrate(IConfiguration configuration);
+
+    void OnMigrateComplete();
+
     void Start(IConfiguration configuration);
 
     void OnStarted();
@@ -19,4 +23,6 @@ public interface IPlugin
     void OnStopped();
 
     IPluginHostApplication Application { get; set; }
+
+    IServiceProvider ServiceProvider { get; set; }
 }

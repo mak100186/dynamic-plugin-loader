@@ -9,7 +9,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\PluginBase\PluginBase.csproj" >
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\PluginBase\PluginBase.csproj">
 			<Private>false</Private>
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</ProjectReference>

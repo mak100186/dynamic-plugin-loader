@@ -1,22 +1,28 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using PluginBase.Abstractions;
 
+using RuntimeAssemblyLoading.Abstractions;
 using RuntimeAssemblyLoading.Services.Plugin;
 
 namespace RuntimeAssemblyLoading.Services;
 public class HostApplication : IHostedService, IPluginHostApplication
 {
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
-    private readonly IConfiguration _configuration;
-    private readonly PluginLoader _pluginLoader;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IPluginLoader _pluginLoader;
+    private readonly ILogger _logger;
+    private readonly StartUpOptions _options;
 
-    public HostApplication(IHostApplicationLifetime hostApplicationLifetime, IConfiguration configuration)
+    public HostApplication(IHostApplicationLifetime hostApplicationLifetime, IServiceProvider serviceProvider, IPluginLoader pluginLoader, ILogger<HostApplication> logger, IOptions<StartUpOptions> options)
     {
         _hostApplicationLifetime = hostApplicationLifetime;
-        _configuration = configuration;
-        _pluginLoader = new PluginLoader(_configuration);
+        _serviceProvider = serviceProvider;
+        _pluginLoader = pluginLoader;
+        _logger = logger;
+        _options = options.Value;
     }
 
 
@@ -38,14 +44,23 @@ public class HostApplication : IHostedService, IPluginHostApplication
         {
             _pluginLoader.ValidatePlugins();
             _pluginLoader.LoadPlugins(this);
-            _pluginLoader.StartPlugins();
+
+            if(_options.ShouldRunMigrationPathway)
+            {
+                _pluginLoader.Migrate();
+            }
+            else
+            {
+                _pluginLoader.StartPlugins();
+            }
+            
             _pluginLoader.StopPlugins();
 
             _pluginLoader.UnloadStoppedPlugins();
 
             if (_pluginLoader.IsEmpty())
             {
-                Console.WriteLine("Application is exiting properly");
+                _logger.LogInformation("Application is exiting properly");
                 Environment.Exit(0);
             }
             else
@@ -55,12 +70,12 @@ public class HostApplication : IHostedService, IPluginHostApplication
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"FATAL: \n{ex.Message}");
+            _logger.LogWarning($"FATAL: \n{ex.Message}");
 
             var innerException = ex.InnerException;
             while (innerException != null)
             {
-                Console.WriteLine($"FATAL: \n{innerException.Message}");
+                _logger.LogWarning($"FATAL: \n{innerException.Message}");
 
                 innerException = innerException.InnerException;
             }
@@ -69,21 +84,26 @@ public class HostApplication : IHostedService, IPluginHostApplication
 
     private void OnStopping()
     {
-        Console.WriteLine("OnStopping - Application");
+        _logger.LogInformation("OnStopping - Application");
     }
 
     private void OnStopped()
     {
-        Console.WriteLine("OnStopped - Application");
+        _logger.LogInformation("OnStopped - Application");
     }
 
     public void PluginStartCompleted(IPlugin plugin)
     {
-        Console.WriteLine($"PluginStartCompleted - {plugin.Name}");
+        _logger.LogInformation($"PluginStartCompleted - {plugin.Name}");
     }
 
     public void PluginStopCompleted(IPlugin plugin)
     {
-        Console.WriteLine($"PluginStopCompleted - {plugin.Name}");
+        _logger.LogInformation($"PluginStopCompleted - {plugin.Name}");
+    }
+
+    public void PluginMigrationCompleted(IPlugin plugin)
+    {
+        _logger.LogInformation($"PluginMigrationCompleted - {plugin.Name}");
     }
 }

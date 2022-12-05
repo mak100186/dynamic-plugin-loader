@@ -13,10 +13,9 @@ public class PluginContext : AssemblyLoadContext
     private readonly IPlugin? instance;
     private AssemblyDependencyResolver _resolver;
 
-    public PluginContext(string pluginPath, string pluginAssemblyName, string typeName, IPluginHostApplication pluginHostApplication)
+    public PluginContext(string pluginPath, string pluginAssemblyName, string typeName, IPluginHostApplication pluginHostApplication, IServiceProvider serviceProvider)
     {
         var fullPathToPlugin = pluginPath + pluginAssemblyName;
-        Console.WriteLine($"Loading assembly from: \n{fullPathToPlugin}");
 
         _resolver = new AssemblyDependencyResolver(fullPathToPlugin);
 
@@ -41,6 +40,7 @@ public class PluginContext : AssemblyLoadContext
         }
 
         instance.Application = pluginHostApplication;
+        instance.ServiceProvider = serviceProvider;
     }
 
     public IPlugin? GetInstance()

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
 using PluginBase.Enums;
@@ -10,13 +11,33 @@ public class Main : IPlugin
 
     public IPluginHostApplication Application { get; set; } = null!;
 
+    public IServiceProvider ServiceProvider { get; set; } = null!;
+
     public State State { get; private set; }
+
+    public void Migrate(IConfiguration configuration)
+    {
+        this.State = State.Starting;
+
+        GetLogger()?.LogInformation($"{this.Name} migrating");
+
+        OnMigrateComplete();
+    }
+
+    public void OnMigrateComplete()
+    {
+        this.State = State.Started;
+
+        GetLogger()?.LogInformation($"{this.Name} has migrated");
+
+        this.Application.PluginMigrationCompleted(this);
+    }
 
     public void OnStarted()
     {
         this.State = State.Started;
 
-        Console.WriteLine($"{this.Name} has started");
+        GetLogger()?.LogInformation($"{this.Name} has started");
 
         this.Application.PluginStartCompleted(this);
     }
@@ -25,7 +46,7 @@ public class Main : IPlugin
     {
         this.State = State.Stopped;
 
-        Console.WriteLine($"{this.Name} has stopped");
+        GetLogger()?.LogInformation($"{this.Name} has stopped");
 
         this.Application.PluginStopCompleted(this);
     }
@@ -34,7 +55,7 @@ public class Main : IPlugin
     {
         this.State = State.Starting;
 
-        Console.WriteLine($"{this.Name} is starting");
+        GetLogger()?.LogInformation($"{this.Name} is starting");
 
         OnStarted();
     }
@@ -43,8 +64,13 @@ public class Main : IPlugin
     {
         this.State = State.Stopping;
 
-        Console.WriteLine($"{this.Name} is stopping");
+        GetLogger()?.LogInformation($"{this.Name} is stopping");
 
         OnStopped();
+    }
+
+    private ILogger? GetLogger()
+    {
+        return (ILogger<Main>?)ServiceProvider.GetService(typeof(ILogger<Main>));
     }
 }

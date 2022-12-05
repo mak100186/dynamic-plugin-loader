@@ -18,9 +18,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+    <PackageReference Include="RestSharp" Version="108.0.1" />
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="108.0.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
+    <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.3" />
+    <PackageReference Include="Unibet.Infrastructure.Core.Extensions" Version="3.1.33" />
+    <PackageReference Include="Unibet.Infrastructure.Hosting.WebApi" Version="3.1.22" />
+    <PackageReference Include="Unibet.Infrastructure.Hosting.WebApi.DependencyInjection" Version="2.0.39" />
   </ItemGroup>
 
   <ItemGroup>
