@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -71,12 +70,12 @@ public class HostApplication : IHostedService, IPluginHostApplication
         }
         catch (Exception ex)
         {
-            _logger.LogWarning($"FATAL: {{@ex}}", ex);
+            _logger.LogWarning($"{{@ex}}", ex);
 
             var innerException = ex.InnerException;
             while (innerException != null)
             {
-                _logger.LogWarning($"FATAL: {{@innerException}}", innerException);
+                _logger.LogWarning($"{{@innerException}}", innerException);
 
                 innerException = innerException.InnerException;
             }

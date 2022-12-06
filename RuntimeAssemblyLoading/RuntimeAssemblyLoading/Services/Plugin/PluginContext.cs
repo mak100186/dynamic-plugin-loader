@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using PluginBase.Abstractions;
 
 namespace RuntimeAssemblyLoading.Services.Plugin;
@@ -40,7 +42,7 @@ public class PluginContext : AssemblyLoadContext
         }
 
         instance.Application = pluginHostApplication;
-        instance.ServiceProvider = serviceProvider;
+        instance.ServiceProvider = serviceProvider.GetRequiredService<IServiceProvider>();
     }
 
     public IPlugin? GetInstance()

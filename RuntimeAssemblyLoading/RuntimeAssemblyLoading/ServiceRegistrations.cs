@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,12 +18,14 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 using RuntimeAssemblyLoading.Abstractions;
-using RuntimeAssemblyLoading.Diagnostics;
 using RuntimeAssemblyLoading.Helpers;
 using RuntimeAssemblyLoading.Services;
 using RuntimeAssemblyLoading.Services.Plugin;
 
 using Serilog;
+using Serilog.Formatting.Compact;
+using Serilog.Templates;
+using Serilog.Templates.Themes;
 
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -76,6 +79,9 @@ public static class ServiceRegistrations
         services.AddSwaggerRegistrations();
         services.AddWebHostServices();
         services.AddHostedService<HostApplication>();
+
+
+        //var pluginMigrater = new PluginMigrator(config);
     }
 
     public static IHostBuilder ConfigureSerilog(this IHostBuilder builder)
@@ -83,7 +89,9 @@ public static class ServiceRegistrations
         return builder.UseSerilog((ctx, conf) =>
         {
             conf.ReadFrom.Configuration(ctx.Configuration);
-            conf.WriteTo.ColoredConsole();
+            conf.WriteTo.Console(new ExpressionTemplate("{ \n { \n @t, @mt, @l: if @l = 'Information' then undefined() else @l, @x, ..@p \n} \n},\n", theme: TemplateTheme.Code));
+            conf
+            .WriteTo.File(path:"log-.txt", outputTemplate:"[{Timestamp:HH:mm:ss} {Level:u3}]{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}{NewLine}", rollingInterval: RollingInterval.Day);
         });
     }
 

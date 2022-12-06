@@ -7,7 +7,7 @@ using PluginBase.Enums;
 namespace PostGreSQLPlugin;
 public class Main : IPlugin
 {
-    public string Name => $"Freebet-B";
+    public string Name => $"PostGreSQL";
 
     public IPluginHostApplication Application { get; set; } = null!;
 
