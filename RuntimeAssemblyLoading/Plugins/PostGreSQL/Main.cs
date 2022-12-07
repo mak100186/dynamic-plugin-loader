@@ -17,9 +17,9 @@ public class Main : IPlugin
 
     private readonly IDemoService _demoService;
 
-    public Main(/*ILogger<Main> logger,*/ IDemoService demoService)
+    public Main(ILogger<Main> logger, IDemoService demoService)
     {
-        ////this._logger = logger;
+        this._logger = logger;
         this._demoService = demoService;
     }
 
@@ -27,7 +27,7 @@ public class Main : IPlugin
     {
         this.State = State.Starting;
 
-        ////this._logger.LogInformation($"{this.Name} migrating");
+        this._logger.LogInformation($"{this.Name} migrating");
         Console.WriteLine(this._demoService.DoWork(this.Name));
 
         await OnMigrateComplete();
@@ -61,7 +61,7 @@ public class Main : IPlugin
     {
         this.State = State.Starting;
 
-        ////this._logger.LogInformation($"{this.Name} is starting");
+        this._logger.LogInformation($"{this.Name} is starting");
         Console.WriteLine(this._demoService.DoWork(this.Name));
 
         await OnStarted();

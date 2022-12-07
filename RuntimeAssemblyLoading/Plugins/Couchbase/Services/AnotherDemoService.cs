@@ -1,4 +1,6 @@
-﻿using PluginBase.Abstractions;
+﻿using Microsoft.Extensions.Logging;
+
+using PluginBase.Abstractions;
 
 namespace CouchbasePlugin.Services;
 
@@ -10,10 +12,10 @@ public interface IAnotherDemoService
 
 public class AnotherDemoService : IAnotherDemoService, IInjectedDependency
 {
-    //public AnotherDemoService(ILogger<AnotherDemoService> logger)
-    //{
-    //    logger.LogInformation("log from inside another demo service");
-    //}
+    public AnotherDemoService(ILogger<AnotherDemoService> logger)
+    {
+        logger.LogInformation("log from inside another demo service");
+    }
 
     public string DoWork(string pluginName)
     {

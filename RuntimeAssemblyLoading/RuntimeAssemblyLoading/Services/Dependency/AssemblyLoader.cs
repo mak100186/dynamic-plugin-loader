@@ -41,7 +41,8 @@ public class AssemblyLoader : AssemblyLoadContext
                 // Instance. If this would be a Controller or something else with clearly defined
                 // scope that is not the lifetime of the application, use AddScoped.
                 services.AddSingleton(typeof(IPlugin), type);
-            } else
+            }
+            else
 
             // Register all classes that implement the ISettings interface
             if (typeof(ISettings).IsAssignableFrom(type))
@@ -59,7 +60,8 @@ public class AssemblyLoader : AssemblyLoadContext
 
                 // Settings can be singleton as we'll only ever read it
                 services.AddSingleton(type, settings);
-            } else
+            }
+            else
 
             if (typeof(IInjectedDependency).IsAssignableFrom(type))
             {
@@ -109,6 +111,17 @@ public class AssemblyLoader : AssemblyLoadContext
         }
 
         return null;
+    }
+
+    protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+    {
+        string libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+        if (libraryPath != null)
+        {
+            return LoadUnmanagedDllFromPath(libraryPath);
+        }
+
+        return IntPtr.Zero;
     }
 
     #endregion

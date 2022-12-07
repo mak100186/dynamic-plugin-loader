@@ -1,5 +1,6 @@
 ﻿using CouchbasePlugin.Configs;
 using CouchbasePlugin.Services;
+
 using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
@@ -18,9 +19,9 @@ public class Main : IPlugin
 
     private readonly IAnotherDemoService _demoService;
 
-    public Main(IAnotherDemoService demoService, CouchbaseSettings settings)
+    public Main(ILogger<Main> logger, IAnotherDemoService demoService, CouchbaseSettings settings)
     {
-        ////this._logger = logger;
+        this._logger = logger;
         this._demoService = demoService;
         Console.WriteLine($"printing settings received from host: {settings.Url}");
     }
@@ -29,7 +30,7 @@ public class Main : IPlugin
     {
         this.State = State.Starting;
 
-        //this._logger.LogInformation($"{this.Name} migrating");
+        this._logger.LogInformation($"{this.Name} migrating");
         Console.WriteLine(this._demoService.DoWork(this.Name));
 
         await OnMigrateComplete();
@@ -48,7 +49,7 @@ public class Main : IPlugin
         this.State = State.Started;
 
         ////this._logger.LogInformation($"{this.Name} has started");
-        Console.WriteLine(this._demoService.DoWork(this.Name));
+
     }
 
     public async Task OnStopped()
@@ -63,7 +64,8 @@ public class Main : IPlugin
     {
         this.State = State.Starting;
 
-        //this._logger.LogInformation($"{this.Name} is starting");
+        Console.WriteLine(this._demoService.DoWork(this.Name));
+        this._logger.LogInformation($"{this.Name} is starting");
 
         await OnStarted();
     }

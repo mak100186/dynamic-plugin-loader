@@ -62,17 +62,15 @@ public static class ServiceRegistrations
         .AddFluentValidation()
         .AddControllersAsServices();
 
-        services.AddKspCouchbase7(config)
-            .EnableMigrations(config);
+        services.AddKspCouchbase7(config).EnableMigrations(config);
 
-        services.AddWebHostServices();
-        services.LoadPluginDependencies(config);
+        services.AddSingleton<IDateTimeService, DateTimeService>();
+        services.AddSingleton<IPluginLoader, PluginLoader>();
+        services.AddSingleton<IPluginMigrator, PluginMigrator>();
+
+        PluginDependenciesLoader.LoadDependencies(services, config);
+
         services.AddHostedService<Worker>();        
-    }
-
-    public static void LoadPluginDependencies(this IServiceCollection services, IConfiguration configuration)
-    {
-        PluginDependenciesLoader.LoadDependencies(services, configuration);
     }
 
     public static IHostBuilder ConfigureSerilog(this IHostBuilder builder)
@@ -84,12 +82,4 @@ public static class ServiceRegistrations
             conf.WriteTo.File(path: "log-.txt", outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}]{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}{NewLine}", rollingInterval: RollingInterval.Day);
         });
     }
-
-    public static void AddWebHostServices(this IServiceCollection services)
-    {
-        services.AddSingleton<IDateTimeService, DateTimeService>();
-        services.AddSingleton<IPluginLoader, PluginLoader>();
-        services.AddSingleton<IPluginMigrator, PluginMigrator>();
-    }
-   
 }
