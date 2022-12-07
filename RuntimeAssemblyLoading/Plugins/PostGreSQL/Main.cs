@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
@@ -15,7 +15,7 @@ public class Main : IPlugin
 
     public State State { get; private set; }
 
-    public async Task Migrate(IServiceProvider serviceProvider)
+    public async Task Migrate()
     {
         this.State = State.Starting;
 

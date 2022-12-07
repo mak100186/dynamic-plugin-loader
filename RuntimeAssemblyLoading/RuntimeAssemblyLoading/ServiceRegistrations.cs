@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 using AutoMapper;
@@ -17,6 +18,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
+using PluginBase.Abstractions;
+
 using RuntimeAssemblyLoading.Abstractions;
 using RuntimeAssemblyLoading.Helpers;
 using RuntimeAssemblyLoading.Services;
@@ -24,6 +27,7 @@ using RuntimeAssemblyLoading.Services.Plugin;
 
 using Serilog;
 using Serilog.Formatting.Compact;
+using Serilog.Sinks.SystemConsole.Themes;
 using Serilog.Templates;
 using Serilog.Templates.Themes;
 
@@ -80,8 +84,12 @@ public static class ServiceRegistrations
         services.AddWebHostServices();
         services.AddHostedService<HostApplication>();
 
+        services.LoadPluginDependencies(config);
+    }
 
-        //var pluginMigrater = new PluginMigrator(config);
+    public static void LoadPluginDependencies(this IServiceCollection services, IConfiguration configuration)
+    {
+        PluginDependenciesLoader.LoadDependencies(services, configuration);
     }
 
     public static IHostBuilder ConfigureSerilog(this IHostBuilder builder)
@@ -89,9 +97,9 @@ public static class ServiceRegistrations
         return builder.UseSerilog((ctx, conf) =>
         {
             conf.ReadFrom.Configuration(ctx.Configuration);
-            conf.WriteTo.Console(new ExpressionTemplate("{ \n { \n @t, @mt, @l: if @l = 'Information' then undefined() else @l, @x, ..@p \n} \n},\n", theme: TemplateTheme.Code));
-            conf
-            .WriteTo.File(path:"log-.txt", outputTemplate:"[{Timestamp:HH:mm:ss} {Level:u3}]{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}{NewLine}", rollingInterval: RollingInterval.Day);
+            //conf.WriteTo.Console(new ExpressionTemplate("{ \n { \n @t, @mt, @l: if @l = 'Information' then undefined() else @l, @x, ..@p \n} \n},\n", theme: TemplateTheme.Code));  
+            conf.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}]{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}{NewLine}");
+            conf.WriteTo.File(path: "log-.txt", outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}]{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}{NewLine}", rollingInterval: RollingInterval.Day);
         });
     }
 
@@ -141,6 +149,7 @@ public static class ServiceRegistrations
     {
         services.AddSingleton<IDateTimeService, DateTimeService>();
         services.AddSingleton<IPluginLoader, PluginLoader>();
+        services.AddSingleton<IPluginMigrator, PluginMigrator>();
     }
     public static void AddSwaggerRegistrations(this IServiceCollection services)
     {

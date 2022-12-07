@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 using PluginBase.Enums;
 
@@ -10,7 +10,7 @@ public interface IPlugin
 
     State State { get; }
 
-    Task Migrate(IServiceProvider serviceProvider);
+    Task Migrate();
 
     Task OnMigrateComplete();
 

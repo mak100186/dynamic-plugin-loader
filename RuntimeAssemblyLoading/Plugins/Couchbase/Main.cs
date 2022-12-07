@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
@@ -10,17 +10,19 @@ public class Main : IPlugin
     public string Name => "Couchbase";
 
     public IPluginHostApplication Application { get; set; } = null!;
+
     public IServiceProvider ServiceProvider { get; set; } = null!;
 
     public State State { get; private set; }
 
-    public async Task Migrate(IServiceProvider serviceProvider)
+    public async Task Migrate()
     {
         this.State = State.Starting;
 
         GetLogger()?.LogInformation($"{this.Name} migrating");
 
-        await CouchbaseMigrations.ApplyMigrationsAsync(serviceProvider);
+        var couchbaseMigrations = ServiceProvider.GetRequiredService<ICouchbaseMigrations>();
+        await couchbaseMigrations.ApplyMigrationsAsync();
 
         await OnMigrateComplete();
     }

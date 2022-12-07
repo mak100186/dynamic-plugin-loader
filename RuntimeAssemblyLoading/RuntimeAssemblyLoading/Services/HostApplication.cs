@@ -13,14 +13,21 @@ public class HostApplication : IHostedService, IPluginHostApplication
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly IServiceProvider _serviceProvider;
     private readonly IPluginLoader _pluginLoader;
+    private readonly IPluginMigrator _pluginMigrator;
     private readonly ILogger _logger;
     private readonly StartUpOptions _options;
 
-    public HostApplication(IHostApplicationLifetime hostApplicationLifetime, IServiceProvider serviceProvider, IPluginLoader pluginLoader, ILogger<HostApplication> logger, IOptions<StartUpOptions> options)
+    public HostApplication(IHostApplicationLifetime hostApplicationLifetime, 
+        IServiceProvider serviceProvider, 
+        IPluginLoader pluginLoader, 
+        IPluginMigrator pluginMigrator, 
+        ILogger<HostApplication> logger, 
+        IOptions<StartUpOptions> options)
     {
         _hostApplicationLifetime = hostApplicationLifetime;
         _serviceProvider = serviceProvider;
         _pluginLoader = pluginLoader;
+        _pluginMigrator = pluginMigrator;
         _logger = logger;
         _options = options.Value;
     }
@@ -42,23 +49,18 @@ public class HostApplication : IHostedService, IPluginHostApplication
     {
         try
         {
-            _pluginLoader.ValidatePlugins();
-            _pluginLoader.LoadPlugins(this);
-
-            if(_options.ShouldRunMigrationPathway)
-            {
-                _pluginLoader.Migrate();
-            }
-            else
-            {
-                _pluginLoader.StartPlugins();
-            }
+            var pluginRunner = (_options.ShouldRunMigrationPathway) ? _pluginMigrator : _pluginLoader;
             
-            _pluginLoader.StopPlugins();
+            pluginRunner.ValidatePlugins();
+            pluginRunner.LoadPlugins(this);
 
-            _pluginLoader.UnloadStoppedPlugins();
+            pluginRunner.StartPlugins();
+            
+            pluginRunner.StopPlugins();
 
-            if (_pluginLoader.IsEmpty())
+            pluginRunner.UnloadStoppedPlugins();
+
+            if (pluginRunner.IsEmpty())
             {
                 _logger.LogInformation("Application is exiting properly");
                 Environment.Exit(0);
