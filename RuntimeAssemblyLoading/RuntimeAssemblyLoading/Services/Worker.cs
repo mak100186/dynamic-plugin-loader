@@ -36,6 +36,8 @@ public class Worker : BackgroundService
 
                 pluginRunner.StopPlugins();
 
+                this._logger.LogInformation("Program will terminate safely");
+
                 Environment.Exit(0);
             }
         }

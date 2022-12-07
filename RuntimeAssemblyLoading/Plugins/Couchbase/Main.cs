@@ -23,7 +23,7 @@ public class Main : IPlugin
     {
         this._logger = logger;
         this._demoService = demoService;
-        Console.WriteLine($"printing settings received from host: {settings.Url}");
+        this._logger.LogInformation($"printing settings received from host: {settings.Url}");
     }
 
     public async Task Migrate()
@@ -31,7 +31,7 @@ public class Main : IPlugin
         this.State = State.Starting;
 
         this._logger.LogInformation($"{this.Name} migrating");
-        Console.WriteLine(this._demoService.DoWork(this.Name));
+        this._logger.LogInformation(this._demoService.DoWork(this.Name));
 
         await OnMigrateComplete();
     }
@@ -40,7 +40,7 @@ public class Main : IPlugin
     {
         this.State = State.Started;
 
-        //this._logger.LogInformation($"{this.Name} has migrated");
+        this._logger.LogInformation($"{this.Name} has migrated");
 
     }
 
@@ -48,7 +48,7 @@ public class Main : IPlugin
     {
         this.State = State.Started;
 
-        ////this._logger.LogInformation($"{this.Name} has started");
+        this._logger.LogInformation($"{this.Name} has started");
 
     }
 
@@ -56,7 +56,7 @@ public class Main : IPlugin
     {
         this.State = State.Stopped;
 
-        //this._logger.LogInformation($"{this.Name} has stopped");
+        this._logger.LogInformation($"{this.Name} has stopped");
 
     }
 
@@ -64,7 +64,7 @@ public class Main : IPlugin
     {
         this.State = State.Starting;
 
-        Console.WriteLine(this._demoService.DoWork(this.Name));
+        this._logger.LogInformation(this._demoService.DoWork(this.Name));
         this._logger.LogInformation($"{this.Name} is starting");
 
         await OnStarted();
@@ -74,7 +74,7 @@ public class Main : IPlugin
     {
         this.State = State.Stopping;
 
-        //this._logger.LogInformation($"{this.Name} is stopping");
+        this._logger.LogInformation($"{this.Name} is stopping");
 
         await OnStopped();
     }

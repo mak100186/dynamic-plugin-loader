@@ -1,4 +1,6 @@
-﻿using PluginBase.Abstractions;
+﻿using Microsoft.Extensions.Logging;
+
+using PluginBase.Abstractions;
 
 namespace PostGreSQLPlugin.Services;
 
@@ -9,12 +11,15 @@ public interface IDemoService
 
 public class DemoService : IDemoService, IInjectedDependency
 {
-    public DemoService(/*ILogger<DemoService> logger*/)
-    {
+    private readonly ILogger _logger;
 
+    public DemoService(ILogger<DemoService> logger)
+    {
+        this._logger = logger;
     }
     public string DoWork(string pluginName)
     {
+        this._logger.LogInformation("DoWork from PostGreSQLPlugin.Services.DemoService called");
         return $"string from dependent service in {pluginName} plugin";
     }
 }

@@ -78,8 +78,8 @@ public static class ServiceRegistrations
         return builder.UseSerilog((ctx, conf) =>
         {
             conf.ReadFrom.Configuration(ctx.Configuration);
-            conf.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}]{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}{NewLine}");
-            conf.WriteTo.File(path: "log-.txt", outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}]{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}{NewLine}", rollingInterval: RollingInterval.Day);
+            conf.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}");
+            conf.WriteTo.File(path: "log-.txt", outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}{NewLine}", rollingInterval: RollingInterval.Day);
         });
     }
 }
