@@ -1,4 +1,4 @@
-﻿namespace RuntimeAssemblyLoading.Services.Plugin;
+﻿namespace RuntimeAssemblyLoading.Services.Options;
 public class StartUpOptions
 {
     public bool ShouldRunMigrationPathway { get; set; }

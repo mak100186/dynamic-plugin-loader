@@ -1,25 +1,34 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
 using PluginBase.Enums;
+using PostGreSQLPlugin.Services;
 
 namespace PostGreSQLPlugin;
 public class Main : IPlugin
 {
-    public string Name => $"PostGreSQL";
+    private readonly ILogger _logger;
 
-    public IPluginHostApplication Application { get; set; } = null!;
+    public string Name => $"PostGreSQL";
 
     public IServiceProvider ServiceProvider { get; set; } = null!;
 
     public State State { get; private set; }
 
+    private readonly IDemoService _demoService;
+
+    public Main(/*ILogger<Main> logger,*/ IDemoService demoService)
+    {
+        ////this._logger = logger;
+        this._demoService = demoService;
+    }
+
     public async Task Migrate()
     {
         this.State = State.Starting;
 
-        GetLogger()?.LogInformation($"{this.Name} migrating");
+        ////this._logger.LogInformation($"{this.Name} migrating");
+        Console.WriteLine(this._demoService.DoWork(this.Name));
 
         await OnMigrateComplete();
     }
@@ -28,34 +37,32 @@ public class Main : IPlugin
     {
         this.State = State.Started;
 
-        GetLogger()?.LogInformation($"{this.Name} has migrated");
+        //this._logger.LogInformation($"{this.Name} has migrated");
 
-        await this.Application.PluginMigrationCompleted(this);
     }
 
     public async Task OnStarted()
     {
         this.State = State.Started;
 
-        GetLogger()?.LogInformation($"{this.Name} has started");
+        //this._logger.LogInformation($"{this.Name} has started");
 
-        await this.Application.PluginStartCompleted(this);
     }
 
     public async Task OnStopped()
     {
         this.State = State.Stopped;
 
-        GetLogger()?.LogInformation($"{this.Name} has stopped");
+        //this._logger.LogInformation($"{this.Name} has stopped");
 
-        await this.Application.PluginStopCompleted(this);
     }
 
     public async Task Start()
     {
         this.State = State.Starting;
 
-        GetLogger()?.LogInformation($"{this.Name} is starting");
+        ////this._logger.LogInformation($"{this.Name} is starting");
+        Console.WriteLine(this._demoService.DoWork(this.Name));
 
         await OnStarted();
     }
@@ -64,13 +71,8 @@ public class Main : IPlugin
     {
         this.State = State.Stopping;
 
-        GetLogger()?.LogInformation($"{this.Name} is stopping");
+        //this._logger.LogInformation($"{this.Name} is stopping");
 
         await OnStopped();
-    }
-
-    private ILogger? GetLogger()
-    {
-        return (ILogger<Main>?)ServiceProvider.GetService(typeof(ILogger<Main>));
     }
 }

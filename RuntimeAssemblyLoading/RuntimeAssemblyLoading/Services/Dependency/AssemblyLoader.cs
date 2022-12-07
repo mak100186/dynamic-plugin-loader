@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using PluginBase.Abstractions;
 
-namespace RuntimeAssemblyLoading.Services.Plugin;
+namespace RuntimeAssemblyLoading.Services.Dependency;
 
 public class AssemblyLoader : AssemblyLoadContext
 {
@@ -29,10 +29,10 @@ public class AssemblyLoader : AssemblyLoadContext
 
     public void RegisterDependenciesFromAssembly(IServiceCollection services, IConfiguration configuration)
     {
-        if (this.Assembly == null)
+        if (Assembly == null)
             throw new ArgumentException($"Assembly does not exist");
 
-        foreach (var type in this.Assembly.GetTypes())
+        foreach (var type in Assembly.GetTypes().Where(x => !x.IsInterface))
         {
             // Register all classes that implement the IIntegration interface
             if (typeof(IPlugin).IsAssignableFrom(type))
@@ -41,7 +41,7 @@ public class AssemblyLoader : AssemblyLoadContext
                 // Instance. If this would be a Controller or something else with clearly defined
                 // scope that is not the lifetime of the application, use AddScoped.
                 services.AddSingleton(typeof(IPlugin), type);
-            }
+            } else
 
             // Register all classes that implement the ISettings interface
             if (typeof(ISettings).IsAssignableFrom(type))
@@ -59,7 +59,7 @@ public class AssemblyLoader : AssemblyLoadContext
 
                 // Settings can be singleton as we'll only ever read it
                 services.AddSingleton(type, settings);
-            }
+            } else
 
             if (typeof(IInjectedDependency).IsAssignableFrom(type))
             {
@@ -78,6 +78,21 @@ public class AssemblyLoader : AssemblyLoadContext
                 else
                 {
                     services.AddSingleton(type);
+                }
+            }
+            else if (type.IsClass && type.IsPublic) //register as singleton all classes where names match - convention
+            {
+                var typeName = type.Name;
+                var interfaceName = "I" + typeName;
+
+                var interfaces = Assembly.GetTypes().Where(x => x.IsInterface);
+                var implementations = Assembly.GetTypes().Where(x => !x.IsInterface);
+
+                if (interfaces.Select(x => x.Name).Contains(interfaceName))
+                {
+                    var interfaceType = interfaces.Single(x => x.Name == interfaceName);
+                    services.AddSingleton(interfaceType, type);
+
                 }
             }
         }

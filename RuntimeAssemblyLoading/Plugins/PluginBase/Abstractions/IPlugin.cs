@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-using PluginBase.Enums;
+﻿using PluginBase.Enums;
 
 namespace PluginBase.Abstractions;
 
@@ -21,8 +19,6 @@ public interface IPlugin
     Task Stop();
 
     Task OnStopped();
-
-    IPluginHostApplication Application { get; set; }
 
     IServiceProvider ServiceProvider { get; set; }
 }

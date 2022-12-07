@@ -9,16 +9,14 @@ namespace RuntimeAssemblyLoading.Services.Plugin;
 
 public class PluginLoader : BasePluginLoader, IPluginLoader
 {    
-    public PluginLoader(IConfiguration configuration, ILogger<PluginLoader> logger, IServiceProvider serviceProvider) : base(configuration, logger, serviceProvider) 
-    {
-       
-    }
+    public PluginLoader(ILogger<PluginLoader> logger, IEnumerable<IPlugin> plugins) 
+        : base(logger, plugins) { }
 
     public override void StartPlugins()
     {
-        foreach (var pluginContext in Plugins)
+        foreach (var pluginContext in _plugins)
         {
-            pluginContext.Instance?.Start()
+            pluginContext.Start()
                 .GetAwaiter().GetResult();
         }
     }

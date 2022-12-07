@@ -1,22 +1,22 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
+using PluginBase.Abstractions;
+
 using RuntimeAssemblyLoading.Abstractions;
 
 namespace RuntimeAssemblyLoading.Services.Plugin;
 
 public class PluginMigrator : BasePluginLoader, IPluginMigrator
 {
-    public PluginMigrator(IConfiguration configuration, ILogger<PluginMigrator> logger, IServiceProvider serviceProvider) : base(configuration, logger, serviceProvider)
-    {
-
-    }
+    public PluginMigrator(ILogger<PluginMigrator> logger, IEnumerable<IPlugin> plugins) 
+        : base(logger, plugins) { }
 
     public override void StartPlugins()
     {
-        foreach (var pluginContext in Plugins)
+        foreach (var pluginContext in _plugins)
         {
-            pluginContext.Instance?.Migrate()
+            pluginContext.Migrate()
                 .GetAwaiter().GetResult();
         }
     }

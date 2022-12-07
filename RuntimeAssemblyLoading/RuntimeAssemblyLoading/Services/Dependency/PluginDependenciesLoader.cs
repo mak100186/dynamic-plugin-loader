@@ -3,7 +3,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace RuntimeAssemblyLoading.Services.Plugin;
+using RuntimeAssemblyLoading.Services.Plugin;
+
+namespace RuntimeAssemblyLoading.Services.Dependency;
 public static class PluginDependenciesLoader
 {
     public static void LoadDependencies(IServiceCollection services, IConfiguration configuration)

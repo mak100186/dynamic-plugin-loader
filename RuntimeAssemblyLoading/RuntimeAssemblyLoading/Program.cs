@@ -35,51 +35,14 @@ app.UseEndpoints(endpoints =>
 
 app.Run();
 
-
-
-/*
-//.net 5
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureSerilog()
-    .ConfigureWebHost()
-    .Build();
-
-//using var scope = host.Services.CreateScope();
-//var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-//await Migrations.ApplyAsync(async () =>
-//{
-//    logger.LogInformation("Applications migration code path invoked");
-
-//    //todo: execute plugin migration code path here
-
-//    //using var context = scope.ServiceProvider.GetRequiredService<IDbContextPlugin>();
-//    //await context.DropAsync();
-//    //context.Migrate();
-
-//    //scope.ServiceProvider.SeedTemplates(); //todo: should go to plugin
-
-//    //await using var context = scope.ServiceProvider.GetRequiredService<ICouchbaseMigration>();
-//    //context.Register(new Initial());
-//    //await context.Apply();
-
-//    //start plugin loader with --migrate
-
-//});
-
-//logger.LogInformation("Applications execution code path invoked");
-
-await host.RunAsync();
-*/
-
 //todo POC:
-//change this to web host instead of generic host
+//-change this to web host instead of generic host
 //implement configurable plugin pipeline
-//register some services here (kafka, couchbase, postgres) and then let the plugin register some stuff
+//-register some services here (kafka, couchbase, postgres) and then let the plugin register some stuff
 //add dbcontext here, pass down to plugin for use
 //plugin should be able to add a new dbcontext and work with both
-//setup migration pathway
-//private repo to put this code base
+//-setup migration pathway
+//-private repo to put this code base
 
 
 /*
