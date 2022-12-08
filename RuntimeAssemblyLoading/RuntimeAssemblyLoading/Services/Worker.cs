@@ -30,6 +30,8 @@ public class Worker : BackgroundService
         {
             if (!stoppingToken.IsCancellationRequested)
             {
+                this._logger.LogInformation("Program will start");
+
                 var pluginRunner = (_options.ShouldRunMigrationPathway) ? _pluginMigrator : _pluginLoader;
 
                 pluginRunner.StartPlugins();
