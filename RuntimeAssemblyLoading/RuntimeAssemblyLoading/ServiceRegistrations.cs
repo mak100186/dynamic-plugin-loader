@@ -1,20 +1,11 @@
 ﻿using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-
-using AutoMapper;
 
 using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 
 using RuntimeAssemblyLoading.Abstractions;
 using RuntimeAssemblyLoading.Helpers;
@@ -25,12 +16,7 @@ using RuntimeAssemblyLoading.Services.Plugin;
 
 using Serilog;
 
-using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.AspNetCore.SwaggerGen;
-
 using Unibet.Infrastructure.Caching.CouchbaseV7;
-using Unibet.Infrastructure.Hosting.WebApi.Configuration;
-using Unibet.Infrastructure.Hosting.WebApi.Filters;
 using Unibet.Infrastructure.Hosting.WebApi.Health;
 
 namespace RuntimeAssemblyLoading;
