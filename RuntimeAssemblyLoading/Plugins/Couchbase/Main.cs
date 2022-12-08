@@ -1,10 +1,13 @@
 ﻿using CouchbasePlugin.Configs;
 using CouchbasePlugin.Services;
 
+using MediatR;
+
 using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
 using PluginBase.Enums;
+using PluginBase.Messages.Commands;
 
 namespace CouchbasePlugin;
 public class Main : IPlugin
@@ -12,6 +15,7 @@ public class Main : IPlugin
     public string Name => "Couchbase";
 
     private readonly ILogger _logger;
+    private readonly IMediator _mediator;
 
     public IServiceProvider ServiceProvider { get; set; } = null!;
 
@@ -19,10 +23,11 @@ public class Main : IPlugin
 
     private readonly IAnotherDemoService _demoService;
 
-    public Main(ILogger<Main> logger, IAnotherDemoService demoService, CouchbaseSettings settings)
+    public Main(ILogger<Main> logger, IAnotherDemoService demoService, CouchbaseSettings settings, IMediator mediator)
     {
         this._logger = logger;
         this._demoService = demoService;
+        this._mediator = mediator;
         this._logger.LogInformation($"printing settings received from host: {settings.Url}");
     }
 
@@ -58,6 +63,8 @@ public class Main : IPlugin
 
         this._logger.LogInformation($"{this.Name} has stopped");
 
+        await _mediator.Publish(new MediatorNotification() { Action = "Couchbase Plugin Fnished" });
+
     }
 
     public async Task Start()
@@ -78,4 +85,22 @@ public class Main : IPlugin
 
         await OnStopped();
     }
+
+    //listener 3: within plugin (host to plugin comms)
+    public class MediatorNotificationHandler3 : INotificationHandler<MediatorNotification>
+{
+    private readonly ILogger _logger;
+
+    public MediatorNotificationHandler3(ILogger<MediatorNotificationHandler3> logger)
+    {
+        this._logger = logger;
+    }
+
+    public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
+    {
+        this._logger.LogInformation($"Notification 3 received: {notification.Action}");
+
+        await Task.CompletedTask;
+    }
+}
 }

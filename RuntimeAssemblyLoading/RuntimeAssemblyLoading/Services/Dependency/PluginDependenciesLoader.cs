@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace RuntimeAssemblyLoading.Services.Dependency;
 public static class PluginDependenciesLoader
 {
-    public static void LoadDependencies(IServiceCollection services, IConfiguration configuration)
+    public static List<Assembly> LoadDependencies(IServiceCollection services, IConfiguration configuration)
     {
         var currentAssembly = Assembly.GetCallingAssembly();
 
@@ -14,10 +14,16 @@ public static class PluginDependenciesLoader
 
         var pluginNames = configuration.GetSection("appSettings:plugins").Get<string[]>();
 
+        var assemblies = new List<Assembly>();
+
         foreach (var pluginName in pluginNames)
         {
             var assemblyLoader = new AssemblyLoader(assemblyPath, pluginName);
             assemblyLoader.RegisterDependenciesFromAssembly(services, configuration);
+
+            assemblies.Add(assemblyLoader.Assembly);
         }
+
+        return assemblies;
     }
 }

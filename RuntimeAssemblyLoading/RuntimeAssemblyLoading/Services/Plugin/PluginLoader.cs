@@ -11,12 +11,11 @@ public class PluginLoader : BasePluginLoader, IPluginLoader
     public PluginLoader(ILogger<PluginLoader> logger, IEnumerable<IPlugin> plugins) 
         : base(logger, plugins) { }
 
-    public override void StartPlugins()
+    public override async Task StartPlugins()
     {
         foreach (var pluginContext in _plugins)
         {
-            pluginContext.Start()
-                .GetAwaiter().GetResult();
+            await pluginContext.Start();
         }
     }
 }

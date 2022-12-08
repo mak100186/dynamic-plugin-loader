@@ -1,6 +1,13 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using System.Diagnostics;
+using System.Net.NetworkInformation;
+
+using MediatR;
+
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
+using PluginBase.Messages.Commands;
 
 using RuntimeAssemblyLoading.Abstractions;
 using RuntimeAssemblyLoading.Services.Options;
@@ -12,8 +19,10 @@ public class Worker : BackgroundService
     private readonly IPluginMigrator _pluginMigrator;
     private readonly ILogger _logger;
     private readonly StartUpOptions _options;
-    
+    private readonly IMediator _mediator;
+
     public Worker(IPluginLoader pluginLoader, 
+        IMediator mediator,
         IPluginMigrator pluginMigrator, 
         ILogger<Worker> logger, 
         IOptions<StartUpOptions> options)
@@ -22,9 +31,10 @@ public class Worker : BackgroundService
         _pluginMigrator = pluginMigrator;
         _logger = logger;
         _options = options.Value;
+        _mediator = mediator;
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         try
         {
@@ -34,9 +44,11 @@ public class Worker : BackgroundService
 
                 var pluginRunner = (_options.ShouldRunMigrationPathway) ? _pluginMigrator : _pluginLoader;
 
-                pluginRunner.StartPlugins();
+                await pluginRunner.StartPlugins();
 
-                pluginRunner.StopPlugins();
+                await pluginRunner.StopPlugins();
+
+                await _mediator.Publish(new MediatorNotification() { Action = "Worker Fnished" });
 
                 this._logger.LogInformation("Program will terminate safely");
 
@@ -56,6 +68,42 @@ public class Worker : BackgroundService
             }
         }
 
-        return Task.CompletedTask;
+        //return Task.CompletedTask;
+    }
+}
+
+//listener 1 : within the host 
+public class MediatorNotificationHandler : INotificationHandler<MediatorNotification>
+{
+    private readonly ILogger _logger;
+
+    public MediatorNotificationHandler(ILogger<MediatorNotificationHandler> logger)
+    {
+        this._logger = logger;
+    }
+
+    public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
+    {
+        this._logger.LogInformation($"Notification received: {notification.Action}");
+
+        await Task.CompletedTask;
+    }
+}
+
+//listener 2 within the host
+public class MediatorNotificationHandler2 : INotificationHandler<MediatorNotification>
+{
+    private readonly ILogger _logger;
+
+    public MediatorNotificationHandler2(ILogger<MediatorNotificationHandler2> logger)
+    {
+        this._logger = logger;
+    }
+
+    public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
+    {
+        this._logger.LogInformation($"Notification 2 received: {notification.Action}");
+
+        await Task.CompletedTask;
     }
 }

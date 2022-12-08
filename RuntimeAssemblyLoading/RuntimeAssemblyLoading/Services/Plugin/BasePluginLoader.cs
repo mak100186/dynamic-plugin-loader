@@ -15,24 +15,25 @@ public abstract class BasePluginLoader
         _plugins = plugins.ToList();
     }
 
-    public void StopPlugins()
+    public async Task StopPlugins()
     {
         foreach (var plugin in _plugins)
         {
-            plugin.Stop()
-                .GetAwaiter().GetResult();
+            await plugin.Stop();
         }
     }
 
-    public int PluginCount()
+    public async Task<int> PluginCount()
     {
+        await Task.CompletedTask;
+
         return _plugins.Count();
     }
 
-    public bool IsEmpty()
+    public async Task<bool> IsEmpty()
     {
-        return this.PluginCount() == 0;
+        return await this.PluginCount() == 0;
     }
 
-    public abstract void StartPlugins();
+    public abstract Task StartPlugins();
 }

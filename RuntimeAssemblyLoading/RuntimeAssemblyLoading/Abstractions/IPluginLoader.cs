@@ -2,8 +2,8 @@
 
 public interface IPluginLoader
 {
-    void StartPlugins();
-    void StopPlugins();
-    int PluginCount();
-    bool IsEmpty();
+    Task StartPlugins();
+    Task StopPlugins();
+    Task<int> PluginCount();
+    Task<bool> IsEmpty();
 }
