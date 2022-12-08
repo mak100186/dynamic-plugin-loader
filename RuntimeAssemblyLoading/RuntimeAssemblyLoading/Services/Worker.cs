@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Net.NetworkInformation;
-
-using MediatR;
+﻿using MediatR;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -67,8 +64,6 @@ public class Worker : BackgroundService
                 innerException = innerException.InnerException;
             }
         }
-
-        //return Task.CompletedTask;
     }
 }
 
