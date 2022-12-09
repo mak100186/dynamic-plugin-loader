@@ -18,10 +18,10 @@ public class Worker : BackgroundService
     private readonly StartUpOptions _options;
     private readonly IMediator _mediator;
 
-    public Worker(IPluginLoader pluginLoader, 
+    public Worker(IPluginLoader pluginLoader,
         IMediator mediator,
-        IPluginMigrator pluginMigrator, 
-        ILogger<Worker> logger, 
+        IPluginMigrator pluginMigrator,
+        ILogger<Worker> logger,
         IOptions<StartUpOptions> options)
     {
         _pluginLoader = pluginLoader;
@@ -45,7 +45,12 @@ public class Worker : BackgroundService
 
                 await pluginRunner.StopPlugins();
 
-                await _mediator.Publish(new MediatorNotification() { Action = "Worker Fnished" });
+                await _mediator.Publish(new MediatorNotification()
+                {
+                    Subjects = new List<string>() { "PostGreSQLNotificationHandler", "CouchBaseNotificationHandler" },
+                    Action = "Worker Fnished",
+                    Arguments = new List<object>() { this }
+                });
 
                 this._logger.LogInformation("Program will terminate safely");
 
@@ -68,36 +73,46 @@ public class Worker : BackgroundService
 }
 
 //listener 1 : within the host 
-public class MediatorNotificationHandler : INotificationHandler<MediatorNotification>
+public class HostNotificationHandler : INotificationHandler<MediatorNotification>
 {
     private readonly ILogger _logger;
 
-    public MediatorNotificationHandler(ILogger<MediatorNotificationHandler> logger)
+    public HostNotificationHandler(ILogger<HostNotificationHandler> logger)
     {
         this._logger = logger;
     }
 
     public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
     {
-        this._logger.LogInformation($"Notification received: {notification.Action}");
+        this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Action} meant for {this.GetType().Name}");
+
+        if (notification.Subjects.Contains(this.GetType().Name))
+        {
+            this._logger.LogInformation($"Notification accepted with {notification.Arguments.Count} args");
+        }
 
         await Task.CompletedTask;
     }
 }
 
-//listener 2 within the host
-public class MediatorNotificationHandler2 : INotificationHandler<MediatorNotification>
+//listener 2 : within the host
+public class HostNotificationHandler2 : INotificationHandler<MediatorNotification>
 {
     private readonly ILogger _logger;
 
-    public MediatorNotificationHandler2(ILogger<MediatorNotificationHandler2> logger)
+    public HostNotificationHandler2(ILogger<HostNotificationHandler2> logger)
     {
         this._logger = logger;
     }
 
     public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
     {
-        this._logger.LogInformation($"Notification 2 received: {notification.Action}");
+        this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Action} meant for {this.GetType().Name}");
+
+        if (notification.Subjects.Contains(this.GetType().Name))
+        {
+            this._logger.LogInformation($"Notification accepted with {notification.Arguments.Count} args");
+        }
 
         await Task.CompletedTask;
     }

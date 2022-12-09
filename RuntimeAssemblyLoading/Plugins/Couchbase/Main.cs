@@ -63,7 +63,12 @@ public class Main : IPlugin
 
         this._logger.LogInformation($"{this.Name} has stopped");
 
-        await _mediator.Publish(new MediatorNotification() { Action = "Couchbase Plugin Fnished" });
+        await _mediator.Publish(new MediatorNotification()
+        {
+            Subjects = new List<string>() { "PostGreSQLNotificationHandler", "HostNotificationHandler" },
+            Action = "Couchbase Plugin Fnished",
+            Arguments = new List<object>() { this }
+        });
 
     }
 
@@ -87,20 +92,25 @@ public class Main : IPlugin
     }
 
     //listener 3: within plugin (host to plugin comms)
-    public class MediatorNotificationHandler3 : INotificationHandler<MediatorNotification>
-{
-    private readonly ILogger _logger;
-
-    public MediatorNotificationHandler3(ILogger<MediatorNotificationHandler3> logger)
+    public class CouchBaseNotificationHandler : INotificationHandler<MediatorNotification>
     {
-        this._logger = logger;
-    }
+        private readonly ILogger _logger;
 
-    public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
-    {
-        this._logger.LogInformation($"Notification 3 received: {notification.Action}");
+        public CouchBaseNotificationHandler(ILogger<CouchBaseNotificationHandler> logger)
+        {
+            this._logger = logger;
+        }
 
-        await Task.CompletedTask;
+        public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
+        {
+            this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Action} meant for {this.GetType().Name}");
+
+            if (notification.Subjects.Contains(this.GetType().Name))
+            {
+                this._logger.LogInformation($"Notification accepted with {notification.Arguments.Count} args");
+            }
+
+            await Task.CompletedTask;
+        }
     }
-}
 }
