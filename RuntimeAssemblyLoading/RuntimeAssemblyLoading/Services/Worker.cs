@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+using PluginBase.Enums;
 using PluginBase.Messages.Commands;
 
 using RuntimeAssemblyLoading.Abstractions;
@@ -39,6 +40,13 @@ public class Worker : BackgroundService
             {
                 this._logger.LogInformation("Program will start");
 
+                await _mediator.Publish(new MediatorNotification()
+                {
+                    Subjects = new List<NotificationSubjects>() { NotificationSubjects.PostGreSQLNotificationHandler, NotificationSubjects.CouchBaseNotificationHandler },
+                    Event = NotificationEvents.WorkerStarted,
+                    Arguments = new List<object>() { this }
+                });
+
                 var pluginRunner = (_options.ShouldRunMigrationPathway) ? _pluginMigrator : _pluginLoader;
 
                 await pluginRunner.StartPlugins();
@@ -47,8 +55,8 @@ public class Worker : BackgroundService
 
                 await _mediator.Publish(new MediatorNotification()
                 {
-                    Subjects = new List<string>() { "PostGreSQLNotificationHandler", "CouchBaseNotificationHandler" },
-                    Action = "Worker Fnished",
+                    Subjects = new List<NotificationSubjects>() { NotificationSubjects.PostGreSQLNotificationHandler, NotificationSubjects.CouchBaseNotificationHandler },
+                    Event = NotificationEvents.WorkerStopped,
                     Arguments = new List<object>() { this }
                 });
 
@@ -84,9 +92,9 @@ public class HostNotificationHandler : INotificationHandler<MediatorNotification
 
     public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
     {
-        this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Action} meant for {this.GetType().Name}");
+        this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Event} meant for {this.GetType().Name}");
 
-        if (notification.Subjects.Contains(this.GetType().Name))
+        if (notification.Subjects.Select(x => x.ToString()).Contains(this.GetType().Name))
         {
             this._logger.LogInformation($"Notification accepted with {notification.Arguments.Count} args");
         }
@@ -107,9 +115,9 @@ public class HostNotificationHandler2 : INotificationHandler<MediatorNotificatio
 
     public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
     {
-        this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Action} meant for {this.GetType().Name}");
+        this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Event} meant for {this.GetType().Name}");
 
-        if (notification.Subjects.Contains(this.GetType().Name))
+        if (notification.Subjects.Select(x => x.ToString()).Contains(this.GetType().Name))
         {
             this._logger.LogInformation($"Notification accepted with {notification.Arguments.Count} args");
         }

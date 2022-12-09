@@ -63,8 +63,8 @@ public class Main : IPlugin
 
         await _mediator.Publish(new MediatorNotification()
         {
-            Subjects = new List<string>() { "PostGreSQLNotificationHandler", "CouchBaseNotificationHandler", "HostNotificationHandler2" },
-            Action = "PostGreSQL Plugin Fnished",
+            Subjects = new List<NotificationSubjects>() { NotificationSubjects.PostGreSQLNotificationHandler, NotificationSubjects.CouchBaseNotificationHandler, NotificationSubjects.HostNotificationHandler2 },
+            Event = NotificationEvents.PluginStopped,
             Arguments = new List<object>() { this }
         });
 
@@ -101,9 +101,9 @@ public class Main : IPlugin
 
         public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
         {
-            this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Action} meant for {this.GetType().Name}");
+            this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Event} meant for {this.GetType().Name}");
 
-            if (notification.Subjects.Contains(this.GetType().Name))
+            if (notification.Subjects.Select(x => x.ToString()).Contains(this.GetType().Name))
             {
                 this._logger.LogInformation($"Notification accepted with {notification.Arguments.Count} args");
             }
