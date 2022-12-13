@@ -10,7 +10,7 @@ public interface IAnotherDemoService
 }
 
 
-public class AnotherDemoService : IAnotherDemoService, IInjectedDependency
+public class AnotherDemoService : IAnotherDemoService//, IInjectedDependency
 {
     public AnotherDemoService(ILogger<AnotherDemoService> logger)
     {

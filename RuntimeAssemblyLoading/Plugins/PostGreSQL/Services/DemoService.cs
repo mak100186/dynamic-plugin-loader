@@ -9,7 +9,7 @@ public interface IDemoService
     string DoWork(string pluginName);
 }
 
-public class DemoService : IDemoService, IInjectedDependency
+public class DemoService : IDemoService//, IInjectedDependency
 {
     private readonly ILogger _logger;
 

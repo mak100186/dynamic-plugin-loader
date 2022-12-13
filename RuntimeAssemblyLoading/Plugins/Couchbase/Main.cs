@@ -3,6 +3,8 @@ using CouchbasePlugin.Services;
 
 using MediatR;
 
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
@@ -112,5 +114,17 @@ public class Main : IPlugin
 
             await Task.CompletedTask;
         }
+    }
+}
+
+public class Registrant : IRegistrant
+{
+    public IServiceCollection Register(IServiceCollection services, IConfiguration config)
+    {
+        services.AddSingleton<IPlugin, Main>();
+        services.AddSingleton<IAnotherDemoService, AnotherDemoService>();
+        services.AddSingleton<IUnusedService, UnusedService>();
+
+        return services;
     }
 }

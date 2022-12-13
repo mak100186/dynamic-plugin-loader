@@ -59,7 +59,7 @@ public static class ServiceRegistrations
         services.AddSingleton<IPluginLoader, PluginLoader>();
         services.AddSingleton<IPluginMigrator, PluginMigrator>();
 
-        var assemblies = PluginDependenciesLoader.LoadDependencies(services, config);
+        var assemblies = services.LoadDependencies(config);
         assemblies.Add(Assembly.GetAssembly(typeof(Program)));
         assemblies.Add(Assembly.GetAssembly(typeof(MediatorNotification)));
         services.AddMediatR(assemblies.ToArray());

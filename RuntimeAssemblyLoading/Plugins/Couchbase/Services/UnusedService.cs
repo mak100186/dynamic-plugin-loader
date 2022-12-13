@@ -4,6 +4,6 @@ public interface IUnusedService
 {
 
 }
-public class UnusedService
+public class UnusedService : IUnusedService
 {
 }
