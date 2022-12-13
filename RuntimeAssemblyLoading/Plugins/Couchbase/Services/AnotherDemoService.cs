@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 
-using PluginBase.Abstractions;
-
 namespace CouchbasePlugin.Services;
 
 public interface IAnotherDemoService
@@ -10,7 +8,7 @@ public interface IAnotherDemoService
 }
 
 
-public class AnotherDemoService : IAnotherDemoService//, IInjectedDependency
+public class AnotherDemoService : IAnotherDemoService
 {
     public AnotherDemoService(ILogger<AnotherDemoService> logger)
     {

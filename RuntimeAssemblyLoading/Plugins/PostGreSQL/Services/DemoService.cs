@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 
-using PluginBase.Abstractions;
-
 namespace PostGreSQLPlugin.Services;
 
 public interface IDemoService
@@ -9,7 +7,7 @@ public interface IDemoService
     string DoWork(string pluginName);
 }
 
-public class DemoService : IDemoService//, IInjectedDependency
+public class DemoService : IDemoService
 {
     private readonly ILogger _logger;
 
