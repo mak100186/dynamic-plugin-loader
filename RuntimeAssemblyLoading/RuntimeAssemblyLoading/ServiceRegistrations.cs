@@ -1,16 +1,11 @@
-﻿using System.Reflection;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 using FluentValidation.AspNetCore;
-
-using MediatR;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-using PluginBase.Messages.Commands;
 
 using RuntimeAssemblyLoading.Abstractions;
 using RuntimeAssemblyLoading.Helpers;
@@ -59,10 +54,7 @@ public static class ServiceRegistrations
         services.AddSingleton<IPluginLoader, PluginLoader>();
         services.AddSingleton<IPluginMigrator, PluginMigrator>();
 
-        var assemblies = services.LoadDependencies(config);
-        assemblies.Add(Assembly.GetAssembly(typeof(Program)));
-        assemblies.Add(Assembly.GetAssembly(typeof(MediatorNotification)));
-        services.AddMediatR(assemblies.ToArray());
+        services.LoadDependencies(config);
 
         services.AddHostedService<Worker>();        
     }

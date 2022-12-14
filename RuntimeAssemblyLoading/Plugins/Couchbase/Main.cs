@@ -1,15 +1,12 @@
 ﻿using CouchbasePlugin.Configs;
 using CouchbasePlugin.Services;
 
-using MediatR;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
 using PluginBase.Enums;
-using PluginBase.Messages.Commands;
 
 namespace CouchbasePlugin;
 public class Main : IPlugin
@@ -17,7 +14,6 @@ public class Main : IPlugin
     public string Name => "Couchbase";
 
     private readonly ILogger _logger;
-    private readonly IMediator _mediator;
 
     public IServiceProvider ServiceProvider { get; set; } = null!;
 
@@ -25,11 +21,10 @@ public class Main : IPlugin
 
     private readonly IAnotherDemoService _demoService;
 
-    public Main(ILogger<Main> logger, IAnotherDemoService demoService, CouchbaseSettings settings, IMediator mediator)
+    public Main(ILogger<Main> logger, IAnotherDemoService demoService, CouchbaseSettings settings)
     {
         this._logger = logger;
         this._demoService = demoService;
-        this._mediator = mediator;
         this._logger.LogInformation($"printing settings received from host: {settings.Url}");
     }
 
@@ -65,12 +60,6 @@ public class Main : IPlugin
 
         this._logger.LogInformation($"{this.Name} has stopped");
 
-        await _mediator.Publish(new MediatorNotification()
-        {
-            Subjects = new List<NotificationSubjects>() { NotificationSubjects.PostGreSQLNotificationHandler, NotificationSubjects.HostNotificationHandler },
-            Event = NotificationEvents.PluginStopped,
-            Arguments = new List<object>() { this }
-        });
 
     }
 
@@ -91,29 +80,6 @@ public class Main : IPlugin
         this._logger.LogInformation($"{this.Name} is stopping");
 
         await OnStopped();
-    }
-
-    //listener 3: within plugin (host to plugin comms)
-    public class CouchBaseNotificationHandler : INotificationHandler<MediatorNotification>
-    {
-        private readonly ILogger _logger;
-
-        public CouchBaseNotificationHandler(ILogger<CouchBaseNotificationHandler> logger)
-        {
-            this._logger = logger;
-        }
-
-        public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
-        {
-            this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Event} meant for {this.GetType().Name}");
-
-            if (notification.Subjects.Select(x => x.ToString()).Contains(this.GetType().Name))
-            {
-                this._logger.LogInformation($"Notification accepted with {notification.Arguments.Count} args");
-            }
-
-            await Task.CompletedTask;
-        }
     }
 }
 

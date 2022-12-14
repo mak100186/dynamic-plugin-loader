@@ -1,12 +1,9 @@
-﻿using MediatR;
-
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using PluginBase.Abstractions;
 using PluginBase.Enums;
-using PluginBase.Messages.Commands;
 
 using PostGreSQLPlugin.Services;
 
@@ -14,7 +11,6 @@ namespace PostGreSQLPlugin;
 public class Main : IPlugin
 {
     private readonly ILogger _logger;
-    private readonly IMediator _mediator;
 
     public string Name => $"PostGreSQL";
 
@@ -24,11 +20,10 @@ public class Main : IPlugin
 
     private readonly IDemoService _demoService;
 
-    public Main(ILogger<Main> logger, IDemoService demoService, IMediator mediator)
+    public Main(ILogger<Main> logger, IDemoService demoService)
     {
         this._logger = logger;
         this._demoService = demoService;
-        this._mediator = mediator;
     }
 
     public async Task Migrate()
@@ -63,13 +58,6 @@ public class Main : IPlugin
 
         this._logger.LogInformation($"{this.Name} has stopped");
 
-        await _mediator.Publish(new MediatorNotification()
-        {
-            Subjects = new List<NotificationSubjects>() { NotificationSubjects.PostGreSQLNotificationHandler, NotificationSubjects.CouchBaseNotificationHandler, NotificationSubjects.HostNotificationHandler2 },
-            Event = NotificationEvents.PluginStopped,
-            Arguments = new List<object>() { this }
-        });
-
     }
 
     public async Task Start()
@@ -89,29 +77,6 @@ public class Main : IPlugin
         this._logger.LogInformation($"{this.Name} is stopping");
 
         await OnStopped();
-    }
-
-    //notification 4 within plugin (host to plugin & pluging to plugin)
-    public class PostGreSQLNotificationHandler : INotificationHandler<MediatorNotification>
-    {
-        private readonly ILogger _logger;
-
-        public PostGreSQLNotificationHandler(ILogger<PostGreSQLNotificationHandler> logger)
-        {
-            this._logger = logger;
-        }
-
-        public async Task Handle(MediatorNotification notification, CancellationToken cancellationToken)
-        {
-            this._logger.LogInformation($"Notification received by {this.GetType().Name}: {notification.Event} meant for {this.GetType().Name}");
-
-            if (notification.Subjects.Select(x => x.ToString()).Contains(this.GetType().Name))
-            {
-                this._logger.LogInformation($"Notification accepted with {notification.Arguments.Count} args");
-            }
-
-            await Task.CompletedTask;
-        }
     }
 }
 
