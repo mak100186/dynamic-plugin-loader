@@ -81,6 +81,11 @@ public class Main : IPlugin
 
         await OnStopped();
     }
+
+    public void Receive(Notification notification)
+    {
+        this._logger.LogInformation($"Notification  intended for {notification.To} received by {this.Name} for action {notification.Action} sent by {notification.From}");
+    }
 }
 
 public class Registrant : IRegistrant

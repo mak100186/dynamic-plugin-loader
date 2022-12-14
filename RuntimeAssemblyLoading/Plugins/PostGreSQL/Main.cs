@@ -19,11 +19,15 @@ public class Main : IPlugin
     public State State { get; private set; }
 
     private readonly IDemoService _demoService;
+    private readonly INotificationManager _notificationManager;
 
-    public Main(ILogger<Main> logger, IDemoService demoService)
+    public Main(ILogger<Main> logger, 
+        INotificationManager notificationManager,
+        IDemoService demoService)
     {
         this._logger = logger;
         this._demoService = demoService;
+        this._notificationManager = notificationManager;
     }
 
     public async Task Migrate()
@@ -41,6 +45,13 @@ public class Main : IPlugin
         this.State = State.Started;
 
         this._logger.LogInformation($"{this.Name} has migrated");
+
+        this._notificationManager.Send(new Notification()
+        {
+            To = "Couchbase",
+            From = this.Name,
+            Action = "Migration Completed"
+        });
 
     }
 
@@ -77,6 +88,11 @@ public class Main : IPlugin
         this._logger.LogInformation($"{this.Name} is stopping");
 
         await OnStopped();
+    }
+
+    public void Receive(Notification notification)
+    {
+        this._logger.LogInformation($"Notification  intended for {notification.To} received by {this.Name} for action {notification.Action} sent by {notification.From}");
     }
 }
 

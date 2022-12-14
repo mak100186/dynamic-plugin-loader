@@ -56,6 +56,7 @@ public static class ServiceRegistrations
         services.AddSingleton<IPluginCollection, PluginCollection>();
         services.AddSingleton<IPluginLoader, PluginLoader>();
         services.AddSingleton<IPluginMigrator, PluginMigrator>();
+        services.AddSingleton<INotificationManager, NotificationManager>();
 
         services.LoadDependencies(config);
 

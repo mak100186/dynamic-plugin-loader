@@ -38,9 +38,7 @@ public class Worker : BackgroundService
 
                 await pluginRunner.StopPlugins();
 
-                this._logger.LogInformation("Program will terminate safely");
-
-                Environment.Exit(0);
+                this._logger.LogInformation("Program will end");
             }
         }
         catch (Exception ex)

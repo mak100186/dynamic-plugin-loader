@@ -20,5 +20,7 @@ public interface IPlugin
 
     Task OnStopped();
 
+    void Receive(Notification notification);
+
     IServiceProvider ServiceProvider { get; set; }
 }
