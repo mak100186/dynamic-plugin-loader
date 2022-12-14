@@ -9,7 +9,7 @@ using PluginBase.Abstractions;
 using PluginBase.Enums;
 
 namespace CouchbasePlugin;
-public class Main : IPlugin
+public class Main : IPlugin, INotificationReceiver
 {
     public string Name => "Couchbase";
 
@@ -20,11 +20,16 @@ public class Main : IPlugin
     public State State { get; private set; }
 
     private readonly IAnotherDemoService _demoService;
+    private readonly INotificationManager _notificationManager;
 
-    public Main(ILogger<Main> logger, IAnotherDemoService demoService, CouchbaseSettings settings)
+    public Main(ILogger<Main> logger, 
+        IAnotherDemoService demoService, 
+        INotificationManager notificationManager,
+        CouchbaseSettings settings)
     {
         this._logger = logger;
         this._demoService = demoService;
+        this._notificationManager = notificationManager;
         this._logger.LogInformation($"printing settings received from host: {settings.Url}");
     }
 
@@ -35,6 +40,13 @@ public class Main : IPlugin
         this._logger.LogInformation($"{this.Name} migrating");
         this._logger.LogInformation(this._demoService.DoWork(this.Name));
 
+        this._notificationManager.Send(new Notification()
+        {
+            To = "PluginWithApi",
+            From = this.Name,
+            Action = "Migration Started"
+        });
+
         await OnMigrateComplete();
     }
 
@@ -44,6 +56,12 @@ public class Main : IPlugin
 
         this._logger.LogInformation($"{this.Name} has migrated");
 
+        this._notificationManager.Send(new Notification()
+        {
+            To = "PostGreSQL",
+            From = this.Name,
+            Action = "Migration Completed"
+        });
     }
 
     public async Task OnStarted()
@@ -51,7 +69,6 @@ public class Main : IPlugin
         this.State = State.Started;
 
         this._logger.LogInformation($"{this.Name} has started");
-
     }
 
     public async Task OnStopped()
@@ -59,8 +76,6 @@ public class Main : IPlugin
         this.State = State.Stopped;
 
         this._logger.LogInformation($"{this.Name} has stopped");
-
-
     }
 
     public async Task Start()

@@ -1,14 +1,14 @@
 ﻿namespace PluginBase.Abstractions;
-public interface IPluginCollection
+public interface IPluginsWrapper
 {
     IEnumerable<IPlugin> Plugins { get; }
 }
 
-public class PluginCollection : IPluginCollection
+public class PluginsWrapper : IPluginsWrapper
 {
     protected readonly List<IPlugin> _plugins;
 
-    public PluginCollection(IEnumerable<IPlugin> plugins)
+    public PluginsWrapper(IEnumerable<IPlugin> plugins)
     {
         _plugins = plugins.ToList();
     }

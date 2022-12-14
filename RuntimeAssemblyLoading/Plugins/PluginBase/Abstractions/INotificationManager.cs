@@ -1,9 +1,16 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PluginBase.Abstractions;
 public interface INotificationManager
 {
     void Send(Notification notification);
+}
+
+public interface INotificationReceiver
+{
+    void Receive(Notification notification);
 }
 
 public class Notification
@@ -22,10 +29,15 @@ public class NotificationManager : INotificationManager
     }
     public void Send(Notification notification)
     {
-        var plugins = this._services.GetRequiredService<IPluginCollection>();
-
+        var plugins = this._services.GetRequiredService<IPluginsWrapper>();
 
         var addressedPlugin = plugins.Plugins.FirstOrDefault(x => x.Name == notification.To);
-        addressedPlugin.Receive(notification);
+
+        if (addressedPlugin != null && addressedPlugin.GetType().GetInterfaces().Select(x => x.Name).Contains(nameof(INotificationReceiver)))
+        {
+            var addressedReceiver = (INotificationReceiver)addressedPlugin;
+            addressedReceiver.Receive(notification);
+        }
+
     }
 }

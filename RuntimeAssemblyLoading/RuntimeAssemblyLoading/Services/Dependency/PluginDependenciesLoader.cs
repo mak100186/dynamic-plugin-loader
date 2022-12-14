@@ -36,7 +36,7 @@ public static class PluginDependenciesLoader
     public static void LoadRegistrants(Assembly pluginAssembly, IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
     {
         var pluginRegistrantTypeName = pluginAssembly.GetTypes()
-        .Single(t => t.GetInterfaces().Any(i => i.Name == "IRegistrant")).FullName;
+        .Single(t => t.GetInterfaces().Any(i => i.Name == nameof(IRegistrant))).FullName;
 
         var pluginRegistrant = pluginAssembly.CreateInstance<IRegistrant>(pluginRegistrantTypeName!);
 

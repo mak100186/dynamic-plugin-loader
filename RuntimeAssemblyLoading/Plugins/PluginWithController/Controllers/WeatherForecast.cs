@@ -1,4 +1,4 @@
-namespace PluginWithController
+namespace PluginWithController.Controllers
 {
     public class WeatherForecast
     {

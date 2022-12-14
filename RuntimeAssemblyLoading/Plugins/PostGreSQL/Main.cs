@@ -8,7 +8,7 @@ using PluginBase.Enums;
 using PostGreSQLPlugin.Services;
 
 namespace PostGreSQLPlugin;
-public class Main : IPlugin
+public class Main : IPlugin, INotificationReceiver
 {
     private readonly ILogger _logger;
 

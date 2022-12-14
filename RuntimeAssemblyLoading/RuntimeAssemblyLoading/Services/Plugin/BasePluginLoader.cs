@@ -5,9 +5,9 @@ namespace RuntimeAssemblyLoading.Services.Plugin;
 public abstract class BasePluginLoader
 {
     protected readonly ILogger _logger;
-    protected readonly IPluginCollection _plugins;
+    protected readonly IPluginsWrapper _plugins;
 
-    public BasePluginLoader(ILogger logger, IPluginCollection plugins)
+    public BasePluginLoader(ILogger logger, IPluginsWrapper plugins)
     {
         _logger = logger;
         _plugins = plugins;

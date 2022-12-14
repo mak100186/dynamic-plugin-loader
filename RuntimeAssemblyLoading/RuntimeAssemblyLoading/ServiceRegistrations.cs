@@ -48,7 +48,7 @@ public static class ServiceRegistrations
         services.AddKspCouchbase7(config).EnableMigrations(config);
 
         services.AddSingleton<IDateTimeService, DateTimeService>();
-        services.AddSingleton<IPluginCollection, PluginCollection>();
+        services.AddSingleton<IPluginsWrapper, PluginsWrapper>();
         services.AddSingleton<IPluginLoader, PluginLoader>();
         services.AddSingleton<IPluginMigrator, PluginMigrator>();
         services.AddSingleton<INotificationManager, NotificationManager>();

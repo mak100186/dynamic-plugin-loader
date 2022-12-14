@@ -6,7 +6,7 @@ namespace RuntimeAssemblyLoading.Services.Plugin;
 
 public class PluginLoader : BasePluginLoader, IPluginLoader
 {    
-    public PluginLoader(ILogger<PluginLoader> logger, IPluginCollection plugins) 
+    public PluginLoader(ILogger<PluginLoader> logger, IPluginsWrapper plugins) 
         : base(logger, plugins) { }
 
     public override async Task StartPlugins()

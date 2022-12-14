@@ -5,14 +5,19 @@ using PluginBase.Enums;
 
 namespace PluginWithController;
 
-public class PluginWithApi : IPlugin
+public class Main : IPlugin, INotificationReceiver
 {
     private readonly ILogger _logger;
     private readonly IPluginApiService _service;
+    private readonly INotificationManager _notificationManager;
 
-    public PluginWithApi(ILogger<PluginWithApi> logger, IPluginApiService service)
+    public Main(ILogger<Main> logger, 
+        INotificationManager notificationManager,
+        IPluginApiService service)
     {
+        _logger = logger;
         _service = service;
+        _notificationManager = notificationManager;
     }
 
     public string Name => "PluginWithApi";
@@ -36,6 +41,14 @@ public class PluginWithApi : IPlugin
 
         this._logger.LogInformation($"{this.Name} has migrated");
 
+        _service.Print(this.Name);
+
+        this._notificationManager.Send(new Notification()
+        {
+            To = "PostGreSQL",
+            From = this.Name,
+            Action = "Migration Completed"
+        });
     }
 
     public async Task OnStarted()
@@ -51,8 +64,6 @@ public class PluginWithApi : IPlugin
         this.State = State.Stopped;
 
         this._logger.LogInformation($"{this.Name} has stopped");
-
-
     }
 
     public async Task Start()
@@ -95,7 +106,7 @@ public static class StaticRegistrant
         mvcBuilder.AddModule(typeof(Registrant));
 
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        services.TryAddSingleton<IPlugin, PluginWithApi>();
+        services.TryAddSingleton<IPlugin, Main>();
         services.TryAddSingleton<IPluginApiService, PluginApiService>();
 
         return services;
