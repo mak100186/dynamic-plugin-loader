@@ -7,17 +7,17 @@ namespace RuntimeAssemblyLoading.Services.Plugin;
 public abstract class BasePluginLoader
 {
     protected readonly ILogger _logger;
-    protected readonly List<IPlugin> _plugins;
+    protected readonly IPluginCollection _plugins;
 
-    public BasePluginLoader(ILogger logger, IEnumerable<IPlugin> plugins)
+    public BasePluginLoader(ILogger logger, IPluginCollection plugins)
     {
         _logger = logger;
-        _plugins = plugins.ToList();
+        _plugins = plugins;
     }
 
     public async Task StopPlugins()
     {
-        foreach (var plugin in _plugins)
+        foreach (var plugin in _plugins.Plugins)
         {
             await plugin.Stop();
         }
@@ -27,7 +27,7 @@ public abstract class BasePluginLoader
     {
         await Task.CompletedTask;
 
-        return _plugins.Count();
+        return _plugins.Plugins.Count();
     }
 
     public async Task<bool> IsEmpty()

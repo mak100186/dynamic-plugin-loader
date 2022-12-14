@@ -8,12 +8,12 @@ namespace RuntimeAssemblyLoading.Services.Plugin;
 
 public class PluginLoader : BasePluginLoader, IPluginLoader
 {    
-    public PluginLoader(ILogger<PluginLoader> logger, IEnumerable<IPlugin> plugins) 
+    public PluginLoader(ILogger<PluginLoader> logger, IPluginCollection plugins) 
         : base(logger, plugins) { }
 
     public override async Task StartPlugins()
     {
-        foreach (var pluginContext in _plugins)
+        foreach (var pluginContext in _plugins.Plugins)
         {
             await pluginContext.Start();
         }

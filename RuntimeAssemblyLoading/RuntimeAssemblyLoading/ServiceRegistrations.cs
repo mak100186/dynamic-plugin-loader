@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using PluginBase.Abstractions;
+
 using RuntimeAssemblyLoading.Abstractions;
 using RuntimeAssemblyLoading.Helpers;
 using RuntimeAssemblyLoading.Services;
@@ -51,6 +53,7 @@ public static class ServiceRegistrations
         services.AddKspCouchbase7(config).EnableMigrations(config);
 
         services.AddSingleton<IDateTimeService, DateTimeService>();
+        services.AddSingleton<IPluginCollection, PluginCollection>();
         services.AddSingleton<IPluginLoader, PluginLoader>();
         services.AddSingleton<IPluginMigrator, PluginMigrator>();
 
