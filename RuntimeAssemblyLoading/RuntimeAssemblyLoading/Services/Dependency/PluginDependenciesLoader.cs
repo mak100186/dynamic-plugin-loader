@@ -1,14 +1,11 @@
 ﻿using System.Reflection;
 
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
 using PluginBase.Abstractions;
 
 namespace RuntimeAssemblyLoading.Services.Dependency;
 public static class PluginDependenciesLoader
 {
-    public static List<Assembly> LoadDependencies(this IServiceCollection services, IConfiguration configuration)
+    public static List<Assembly> LoadDependencies(this IServiceCollection services, IConfiguration configuration, IMvcBuilder mvcBuilder)
     {
         var currentAssembly = Assembly.GetCallingAssembly();
 
@@ -30,20 +27,20 @@ public static class PluginDependenciesLoader
 
             assemblies.Add(assemblyLoader.Assembly);
 
-            LoadRegistrants(assemblyLoader.Assembly, services, configuration);
+            LoadRegistrants(assemblyLoader.Assembly, services, configuration, mvcBuilder);
         }
 
         return assemblies;
     }
 
-    public static void LoadRegistrants(Assembly pluginAssembly, IServiceCollection services, IConfiguration config)
+    public static void LoadRegistrants(Assembly pluginAssembly, IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
     {
         var pluginRegistrantTypeName = pluginAssembly.GetTypes()
         .Single(t => t.GetInterfaces().Any(i => i.Name == "IRegistrant")).FullName;
 
         var pluginRegistrant = pluginAssembly.CreateInstance<IRegistrant>(pluginRegistrantTypeName!);
 
-        pluginRegistrant.Register(services, config); // create services the host doesn't know about
+        pluginRegistrant.Register(services, config, mvcBuilder); // create services the host doesn't know about
 
         // a plugin can contribute more than one class
         foreach (var pluginType in pluginAssembly.GetTypes().Where(t => t.GetInterfaces().Any(i => i.Name == nameof(IPlugin))))

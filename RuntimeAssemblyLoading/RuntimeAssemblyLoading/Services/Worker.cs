@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 using RuntimeAssemblyLoading.Abstractions;
 using RuntimeAssemblyLoading.Services.Options;

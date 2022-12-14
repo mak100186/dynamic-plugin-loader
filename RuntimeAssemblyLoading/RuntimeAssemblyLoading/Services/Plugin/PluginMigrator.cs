@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-
-using PluginBase.Abstractions;
+﻿using PluginBase.Abstractions;
 
 using RuntimeAssemblyLoading.Abstractions;
 

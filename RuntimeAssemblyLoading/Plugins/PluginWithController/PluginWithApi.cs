@@ -1,41 +1,31 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using PluginBase.Abstractions;
 using PluginBase.Enums;
 
-using PostGreSQLPlugin.Services;
+namespace PluginWithController;
 
-namespace PostGreSQLPlugin;
-public class Main : IPlugin
+public class PluginWithApi : IPlugin
 {
     private readonly ILogger _logger;
+    private readonly IPluginApiService _service;
 
-    public string Name => $"PostGreSQL";
+    public PluginWithApi(ILogger<PluginWithApi> logger, IPluginApiService service)
+    {
+        _service = service;
+    }
 
-    public IServiceProvider ServiceProvider { get; set; } = null!;
+    public string Name => "PluginWithApi";
 
     public State State { get; private set; }
 
-    private readonly IDemoService _demoService;
-    private readonly INotificationManager _notificationManager;
-
-    public Main(ILogger<Main> logger, 
-        INotificationManager notificationManager,
-        IDemoService demoService)
-    {
-        this._logger = logger;
-        this._demoService = demoService;
-        this._notificationManager = notificationManager;
-    }
+    public IServiceProvider ServiceProvider { get; set; } = null!;
 
     public async Task Migrate()
     {
         this.State = State.Starting;
 
         this._logger.LogInformation($"{this.Name} migrating");
-        this._logger.LogInformation(this._demoService.DoWork(this.Name));
 
         await OnMigrateComplete();
     }
@@ -45,13 +35,6 @@ public class Main : IPlugin
         this.State = State.Started;
 
         this._logger.LogInformation($"{this.Name} has migrated");
-
-        this._notificationManager.Send(new Notification()
-        {
-            To = "Couchbase",
-            From = this.Name,
-            Action = "Migration Completed"
-        });
 
     }
 
@@ -69,6 +52,7 @@ public class Main : IPlugin
 
         this._logger.LogInformation($"{this.Name} has stopped");
 
+
     }
 
     public async Task Start()
@@ -76,7 +60,6 @@ public class Main : IPlugin
         this.State = State.Starting;
 
         this._logger.LogInformation($"{this.Name} is starting");
-        this._logger.LogInformation(this._demoService.DoWork(this.Name));
 
         await OnStarted();
     }
@@ -96,14 +79,44 @@ public class Main : IPlugin
     }
 }
 
-
 public class Registrant : IRegistrant
 {
     public IServiceCollection Register(IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
     {
-        services.AddSingleton<IPlugin, Main>();
-        services.AddSingleton<IDemoService, DemoService>();
+        services = StaticRegistrant.Register(services, config, mvcBuilder);
+        return services;
+    }
+}
+
+public static class StaticRegistrant
+{
+    public static IServiceCollection Register(this IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
+    {
+        mvcBuilder.AddModule(typeof(Registrant));
+
+        services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        services.TryAddSingleton<IPlugin, PluginWithApi>();
+        services.TryAddSingleton<IPluginApiService, PluginApiService>();
 
         return services;
+    }
+
+    public static IMvcBuilder AddModule(this IMvcBuilder builder, Type type)
+    {
+        return builder
+            .AddApplicationPart(type.Assembly)
+            .AddControllersAsServices();
+    }
+}
+
+public interface IPluginApiService
+{
+    string Print(string input);
+}
+public class PluginApiService : IPluginApiService
+{
+    public string Print(string text)
+    {
+        return text + text;
     }
 }

@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
-using RuntimeAssemblyLoading;
+﻿using RuntimeAssemblyLoading;
 
 using Unibet.Infrastructure.Hosting.WebApi.Health;
 
@@ -11,19 +7,31 @@ using Unibet.Infrastructure.Hosting.WebApi.Health;
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureSerilog();
 
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+IMvcBuilder mvcBuilder = builder.Services.AddControllersWithViews();
+
 var shouldRunMigrationPathway = args.Contains("--migrate");
-builder.Services.ConfigureServices(builder.Configuration, shouldRunMigrationPathway);
+builder.Services.ConfigureServices(builder.Configuration, mvcBuilder, shouldRunMigrationPathway);
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
 }
 
 app.UseForwardedHeaders();
 
+app.UseHttpsRedirection();
+
 app.UseRouting();
+
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {

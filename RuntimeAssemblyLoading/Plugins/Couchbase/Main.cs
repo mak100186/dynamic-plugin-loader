@@ -90,7 +90,7 @@ public class Main : IPlugin
 
 public class Registrant : IRegistrant
 {
-    public IServiceCollection Register(IServiceCollection services, IConfiguration config)
+    public IServiceCollection Register(IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
     {
         services.AddSingleton<IPlugin, Main>();
         services.AddSingleton<IAnotherDemoService, AnotherDemoService>();

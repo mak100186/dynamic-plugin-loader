@@ -2,11 +2,6 @@
 
 using FluentValidation.AspNetCore;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 using PluginBase.Abstractions;
 
 using RuntimeAssemblyLoading.Abstractions;
@@ -24,7 +19,7 @@ using Unibet.Infrastructure.Hosting.WebApi.Health;
 namespace RuntimeAssemblyLoading;
 public static class ServiceRegistrations
 {
-    public static void ConfigureServices(this IServiceCollection services, IConfiguration config, bool shouldRunMigrationPathway)
+    public static void ConfigureServices(this IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder, bool shouldRunMigrationPathway)
     {
         //No DbContext, No Couchbase, No Kafka - they should be loaded by their respective plugins. 
         services.AddControllers(x => x.AllowEmptyInputInBodyModelBinding = true)
@@ -58,7 +53,7 @@ public static class ServiceRegistrations
         services.AddSingleton<IPluginMigrator, PluginMigrator>();
         services.AddSingleton<INotificationManager, NotificationManager>();
 
-        services.LoadDependencies(config);
+        services.LoadDependencies(config, mvcBuilder);
 
         services.AddHostedService<Worker>();        
     }
