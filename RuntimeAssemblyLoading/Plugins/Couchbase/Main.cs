@@ -9,7 +9,10 @@ using PluginBase.Abstractions;
 using PluginBase.Enums;
 
 namespace CouchbasePlugin;
-public class Main : IPlugin, INotificationReceiver
+
+public interface IPluginCouchbase : IPlugin { }
+
+public class Main : IPluginCouchbase, INotificationReceiver
 {
     public string Name => "Couchbase";
 
