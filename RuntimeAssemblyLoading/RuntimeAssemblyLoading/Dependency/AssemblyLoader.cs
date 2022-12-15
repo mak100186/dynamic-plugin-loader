@@ -3,7 +3,7 @@ using System.Runtime.Loader;
 
 using PluginBase.Abstractions;
 
-namespace RuntimeAssemblyLoading.Services.Dependency;
+namespace RuntimeAssemblyLoading.Dependency;
 
 public class AssemblyLoader : AssemblyLoadContext
 {
@@ -66,7 +66,7 @@ public class AssemblyLoader : AssemblyLoadContext
 
     protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
     {
-        string libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+        var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
         if (libraryPath != null)
         {
             return LoadUnmanagedDllFromPath(libraryPath);

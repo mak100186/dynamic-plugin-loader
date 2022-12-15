@@ -1,12 +1,17 @@
 ﻿using PluginBase.Abstractions;
 
-using RuntimeAssemblyLoading.Abstractions;
-
 namespace RuntimeAssemblyLoading.Services.Plugin;
+public interface IPluginLoader
+{
+    Task StartPlugins();
+    Task StopPlugins();
+    Task<int> PluginCount();
+    Task<bool> IsEmpty();
+}
 
 public class PluginLoader : BasePluginLoader, IPluginLoader
-{    
-    public PluginLoader(ILogger<PluginLoader> logger, IPluginsWrapper plugins) 
+{
+    public PluginLoader(ILogger<PluginLoader> logger, IPluginsWrapper plugins)
         : base(logger, plugins) { }
 
     public override async Task StartPlugins()

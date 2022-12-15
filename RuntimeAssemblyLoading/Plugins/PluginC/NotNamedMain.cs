@@ -1,34 +1,41 @@
-﻿using PluginBase.Abstractions;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+using PluginBase.Abstractions;
 using PluginBase.Enums;
 
-namespace PluginWithController;
-
-public class Main : IPlugin, INotificationReceiver
+namespace PluginC;
+public class NotNamedMain : IPlugin, INotificationReceiver
 {
-    private readonly ILogger _logger;
-    private readonly IPluginApiService _service;
-    private readonly INotificationManager _notificationManager;
+    public string Name => "PluginC";
 
-    public Main(ILogger<Main> logger,
-        INotificationManager notificationManager,
-        IPluginApiService service)
-    {
-        _logger = logger;
-        _service = service;
-        _notificationManager = notificationManager;
-    }
-
-    public string Name => "PluginWithApi";
+    public IServiceProvider ServiceProvider { get; set; } = null!;
 
     public State State { get; private set; }
 
-    public IServiceProvider ServiceProvider { get; set; } = null!;
+    private readonly INotificationManager _notificationManager;
+    private readonly ILogger _logger;
+
+    public NotNamedMain(ILogger<NotNamedMain> logger, 
+        INotificationManager notificationManager)
+    {
+        this._logger = logger;
+        this._notificationManager = notificationManager;
+    }
 
     public async Task Migrate()
     {
         this.State = State.Starting;
 
         this._logger.LogInformation($"{this.Name} migrating");
+
+        this._notificationManager.Send(new Notification()
+        {
+            To = "PluginWithApi",
+            From = this.Name,
+            Action = "Migration Started"
+        });
 
         await OnMigrateComplete();
     }
@@ -38,8 +45,6 @@ public class Main : IPlugin, INotificationReceiver
         this.State = State.Started;
 
         this._logger.LogInformation($"{this.Name} has migrated");
-
-        _service.Print(this.Name);
 
         this._notificationManager.Send(new Notification()
         {
@@ -54,7 +59,6 @@ public class Main : IPlugin, INotificationReceiver
         this.State = State.Started;
 
         this._logger.LogInformation($"{this.Name} has started");
-
     }
 
     public async Task OnStopped()
@@ -85,5 +89,15 @@ public class Main : IPlugin, INotificationReceiver
     public void Receive(Notification notification)
     {
         this._logger.LogInformation($"Notification  intended for {notification.To} received by {this.Name} for action {notification.Action} sent by {notification.From}");
+    }
+}
+
+public class Registrant : IRegistrant
+{
+    public IServiceCollection Register(IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
+    {
+        services.AddSingleton<IPlugin, NotNamedMain>();
+
+        return services;
     }
 }

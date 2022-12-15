@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 
-using RuntimeAssemblyLoading.Abstractions;
 using RuntimeAssemblyLoading.Services.Options;
+using RuntimeAssemblyLoading.Services.Plugin;
 
 namespace RuntimeAssemblyLoading.Services;
 public class Worker : BackgroundService

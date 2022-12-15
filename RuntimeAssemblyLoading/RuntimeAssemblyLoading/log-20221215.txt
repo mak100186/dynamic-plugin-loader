@@ -284,3 +284,97 @@
 
 [10:21:11 INF] Program will end
 
+[10:35:12 INF] log from inside another demo service
+
+[10:35:12 INF] printing settings received from host: https://localhost:3000/api/message
+
+[10:44:05 INF] log from inside another demo service
+
+[10:44:05 INF] printing settings received from host: https://localhost:3000/api/message
+
+[10:46:05 INF] log from inside another demo service
+
+[10:46:05 INF] printing settings received from host: https://localhost:3000/api/message
+
+[10:55:02 INF] log from inside another demo service
+
+[10:55:02 INF] printing settings received from host: https://localhost:3000/api/message
+
+[10:59:55 INF] log from inside another demo service
+
+[10:59:55 INF] printing settings received from host: https://localhost:3000/api/message
+
+[11:05:21 INF] log from inside another demo service
+
+[11:05:21 INF] printing settings received from host: https://localhost:3000/api/message
+
+[11:14:01 INF] log from inside another demo service
+
+[11:14:01 INF] printing settings received from host: https://localhost:3000/api/message
+
+[11:15:32 INF] log from inside another demo service
+
+[11:15:32 INF] printing settings received from host: https://localhost:3000/api/message
+
+[11:17:28 INF] log from inside another demo service
+
+[11:17:28 INF] printing settings received from host: https://localhost:3000/api/message
+
+[11:38:21 INF] log from inside another demo service
+
+[11:38:21 INF] printing settings received from host: https://localhost:3000/api/message
+
+[11:38:31 INF] Program will start
+
+[11:38:31 INF] Couchbase migrating
+
+[11:38:31 INF] string from dependent service in Couchbase plugin
+
+[11:38:35 INF] Notification  intended for PluginWithApi received by PluginWithApi for action Migration Started sent by Couchbase
+
+[11:38:35 INF] Couchbase has migrated
+
+[11:38:36 INF] Notification  intended for PostGreSQL received by PostGreSQL for action Migration Completed sent by Couchbase
+
+[11:38:36 INF] PostGreSQL migrating
+
+[11:38:36 INF] DoWork from PostGreSQLPlugin.Services.DemoService called
+
+[11:38:36 INF] string from dependent service in PostGreSQL plugin
+
+[11:38:36 INF] PostGreSQL has migrated
+
+[11:38:37 INF] Notification  intended for Couchbase received by Couchbase for action Migration Completed sent by PostGreSQL
+
+[11:38:37 INF] PluginWithApi migrating
+
+[11:38:37 INF] PluginWithApi has migrated
+
+[11:38:38 INF] Notification  intended for PostGreSQL received by PostGreSQL for action Migration Completed sent by PluginWithApi
+
+[11:38:38 INF] PluginC migrating
+
+[11:38:39 INF] Notification  intended for PluginWithApi received by PluginWithApi for action Migration Started sent by PluginC
+
+[11:38:39 INF] PluginC has migrated
+
+[11:38:40 INF] Notification  intended for PostGreSQL received by PostGreSQL for action Migration Completed sent by PluginC
+
+[11:38:40 INF] Couchbase is stopping
+
+[11:38:40 INF] Couchbase has stopped
+
+[11:38:40 INF] PostGreSQL is stopping
+
+[11:38:40 INF] PostGreSQL has stopped
+
+[11:38:40 INF] PluginWithApi is stopping
+
+[11:38:40 INF] PluginWithApi has stopped
+
+[11:38:40 INF] PluginC is stopping
+
+[11:38:40 INF] PluginC has stopped
+
+[11:38:40 INF] Program will end
+
