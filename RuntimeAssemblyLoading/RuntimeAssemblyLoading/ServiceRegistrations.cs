@@ -70,12 +70,12 @@ public static class ServiceRegistrations
             var assemblyLoader = new AssemblyLoader(assemblyPath, pluginName);
             assemblyLoader.RegisterDependenciesFromAssembly(services, configuration);
 
-            var pluginRegistrantTypeName = assemblyLoader.Assembly.GetTypes()
+            var pluginRegistrantTypeName = assemblyLoader.Assembly!.GetTypes()
                 .Single(t => t.GetInterfaces().Any(i => i.Name == nameof(IRegistrant))).FullName;
 
             var pluginRegistrant = assemblyLoader.Assembly.CreateInstance<IRegistrant>(pluginRegistrantTypeName!);
 
-            pluginRegistrant.Register(services, configuration, mvcBuilder); // create services the host doesn't know about
+            pluginRegistrant.Register(mvcBuilder, configuration); // create services the host doesn't know about
         }
     }
 

@@ -94,10 +94,11 @@ public class NotNamedMain : IPlugin, INotificationReceiver
 
 public class Registrant : IRegistrant
 {
-    public IServiceCollection Register(IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
+    public IMvcBuilder Register(IMvcBuilder mvcBuilder, IConfiguration? config)
     {
-        services.AddSingleton<IPlugin, NotNamedMain>();
+        
+        mvcBuilder.Services.AddSingleton<IPlugin, NotNamedMain>();
 
-        return services;
+        return mvcBuilder;
     }
 }

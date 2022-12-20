@@ -4,6 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 namespace PluginBase.Abstractions;
 public interface IRegistrant
 {
-    public IServiceCollection Register(IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder);
+    public IMvcBuilder Register(IMvcBuilder mvcBuilder, IConfiguration? config);
 }
 

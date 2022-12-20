@@ -99,11 +99,11 @@ public class Main : IPlugin, INotificationReceiver
 
 public class Registrant : IRegistrant
 {
-    public IServiceCollection Register(IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
+    public IMvcBuilder Register(IMvcBuilder mvcBuilder, IConfiguration? config)
     {
-        services.AddSingleton<IPlugin, Main>();
-        services.AddSingleton<IDemoService, DemoService>();
+        mvcBuilder.Services.AddSingleton<IPlugin, Main>();
+        mvcBuilder.Services.AddSingleton<IDemoService, DemoService>();
 
-        return services;
+        return mvcBuilder;
     }
 }

@@ -6,10 +6,10 @@ namespace PluginWithController;
 
 public class Registrant : IRegistrant
 {
-    public IServiceCollection Register(IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
+    public IMvcBuilder Register(IMvcBuilder mvcBuilder, IConfiguration? config)
     {
-        services = StaticRegistrant.Register(services, config, mvcBuilder);
-        return services;
+        StaticRegistrant.Register(mvcBuilder.Services, config, mvcBuilder);
+        return mvcBuilder;
     }
 }
 

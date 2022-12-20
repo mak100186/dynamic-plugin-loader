@@ -108,12 +108,12 @@ public class Main : IPluginCouchbase, INotificationReceiver
 
 public class Registrant : IRegistrant
 {
-    public IServiceCollection Register(IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
+    public IMvcBuilder Register(IMvcBuilder mvcBuilder, IConfiguration? config)
     {
-        services.AddSingleton<IPlugin, Main>();
-        services.AddSingleton<IAnotherDemoService, AnotherDemoService>();
-        services.AddSingleton<IUnusedService, UnusedService>();
+        mvcBuilder.Services.AddSingleton<IPlugin, Main>();
+        mvcBuilder.Services.AddSingleton<IAnotherDemoService, AnotherDemoService>();
+        mvcBuilder.Services.AddSingleton<IUnusedService, UnusedService>();
 
-        return services;
+        return mvcBuilder;
     }
 }
