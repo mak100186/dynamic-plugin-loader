@@ -1,6 +1,6 @@
 ﻿namespace PluginBase.Enums;
 
-public enum State
+public enum PluginState
 {
     Starting,
     Started,

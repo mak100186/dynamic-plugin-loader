@@ -4,9 +4,9 @@ namespace PluginBase.Abstractions;
 
 public interface IPlugin
 {
-    string Name { get; }
+    string UniqueIdentifier { get; }
 
-    State State { get; }
+    PluginState State { get; }
 
     Task Migrate();
 
@@ -20,5 +20,4 @@ public interface IPlugin
 
     Task OnStopped();    
 
-    IServiceProvider ServiceProvider { get; set; }
 }
