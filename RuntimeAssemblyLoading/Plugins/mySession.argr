@@ -1,0 +1,13 @@
+<ArchitectureGraph>
+  <Module Identifier="F7FF2038-5924-431A-BB24-C36063A8DE84" Name="RuntimeAssemblyLoading" />
+  <Module Identifier="04535B3C-443C-43C1-BA0F-7AC4E1AAD25F" Name="PluginBase" />
+  <Module Identifier="CFD5396E-4FBC-4AF5-83E1-9CF40C0E4250" Name="CouchbasePlugin" />
+  <Module Identifier="5F196859-9B83-452D-96B0-1ED77B7140F4" Name="PostGreSQLPlugin" />
+  <Module Identifier="59A36BBF-A61B-42FC-B153-A28910E168D8" Name="PluginWithController" />
+  <Module Identifier="D637B56A-5BF5-4916-832F-AD9CA07552AB" Name="PluginC" />
+  <Reference Identifier="F7FF2038-5924-431A-BB24-C36063A8DE84/r:PluginBase" SourceId="F7FF2038-5924-431A-BB24-C36063A8DE84" Name="PluginBase" TargetId="04535B3C-443C-43C1-BA0F-7AC4E1AAD25F" />
+  <Reference Identifier="CFD5396E-4FBC-4AF5-83E1-9CF40C0E4250/r:PluginBase" SourceId="CFD5396E-4FBC-4AF5-83E1-9CF40C0E4250" Name="PluginBase" TargetId="04535B3C-443C-43C1-BA0F-7AC4E1AAD25F" />
+  <Reference Identifier="5F196859-9B83-452D-96B0-1ED77B7140F4/r:PluginBase" SourceId="5F196859-9B83-452D-96B0-1ED77B7140F4" Name="PluginBase" TargetId="04535B3C-443C-43C1-BA0F-7AC4E1AAD25F" />
+  <Reference Identifier="59A36BBF-A61B-42FC-B153-A28910E168D8/r:PluginBase" SourceId="59A36BBF-A61B-42FC-B153-A28910E168D8" Name="PluginBase" TargetId="04535B3C-443C-43C1-BA0F-7AC4E1AAD25F" />
+  <Reference Identifier="D637B56A-5BF5-4916-832F-AD9CA07552AB/r:PluginBase" SourceId="D637B56A-5BF5-4916-832F-AD9CA07552AB" Name="PluginBase" TargetId="04535B3C-443C-43C1-BA0F-7AC4E1AAD25F" />
+</ArchitectureGraph>
