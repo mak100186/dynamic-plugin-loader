@@ -3,7 +3,7 @@ using RuntimeAssemblyLoading.Services.Options;
 
 
 //.net 6
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureSerilog();
 
 builder.Services.Configure<StartUpOptions>(options =>
@@ -13,7 +13,7 @@ builder.Services.Configure<StartUpOptions>(options =>
 
 builder.Services.ConfigureServices(builder.Configuration);
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {

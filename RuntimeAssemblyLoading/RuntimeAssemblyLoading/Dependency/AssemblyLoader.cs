@@ -7,34 +7,37 @@ namespace RuntimeAssemblyLoading.Dependency;
 
 public class AssemblyLoader : AssemblyLoadContext
 {
-    private AssemblyDependencyResolver _resolver;
+    private readonly AssemblyDependencyResolver _resolver;
 
     public Assembly? Assembly { get; }
 
     public AssemblyLoader(string pluginPath, string pluginAssemblyName)
     {
-        var fullPathToPlugin = pluginPath + pluginAssemblyName;
+        string fullPathToPlugin = pluginPath + pluginAssemblyName;
 
-        _resolver = new AssemblyDependencyResolver(fullPathToPlugin);
+        this._resolver = new(fullPathToPlugin);
 
-        Assembly = LoadFromAssemblyName(AssemblyName.GetAssemblyName(fullPathToPlugin));
-        if (Assembly == null)
+        this.Assembly = this.LoadFromAssemblyName(AssemblyName.GetAssemblyName(fullPathToPlugin));
+        if (this.Assembly == null)
         {
-            throw new Exception("Assembly not found");
+            throw new("Assembly not found");
         }
     }
 
     public void RegisterDependenciesFromAssembly(IServiceCollection services, IConfiguration configuration)
     {
-        if (Assembly == null)
+        if (this.Assembly == null)
+        {
             throw new ArgumentException($"Assembly does not exist");
+        }
 
-        foreach (var type in Assembly.GetTypes().Where(x => !x.IsInterface))
+        foreach (Type? type in this.Assembly.GetTypes().Where(x => !x.IsInterface))
         {
             // Register all classes that implement the ISettings interface
             if (typeof(ISettings).IsAssignableFrom(type))
             {
-                var settings = Activator.CreateInstance(type);
+                object? settings = Activator.CreateInstance(type);
+
                 // appsettings.json or some other configuration provider should contain
                 // a key with the same name as the type
                 // e.g. "HttpIntegrationSettings": { ... }
@@ -55,10 +58,10 @@ public class AssemblyLoader : AssemblyLoadContext
 
     protected override Assembly Load(AssemblyName assemblyName)
     {
-        var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+        string? assemblyPath = this._resolver.ResolveAssemblyToPath(assemblyName);
         if (assemblyPath != null)
         {
-            return LoadFromAssemblyPath(assemblyPath);
+            return this.LoadFromAssemblyPath(assemblyPath);
         }
 
         return null;
@@ -66,10 +69,10 @@ public class AssemblyLoader : AssemblyLoadContext
 
     protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
     {
-        var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+        string? libraryPath = this._resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
         if (libraryPath != null)
         {
-            return LoadUnmanagedDllFromPath(libraryPath);
+            return this.LoadUnmanagedDllFromPath(libraryPath);
         }
 
         return IntPtr.Zero;

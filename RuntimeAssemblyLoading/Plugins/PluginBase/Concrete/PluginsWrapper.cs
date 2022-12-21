@@ -10,10 +10,10 @@ public class PluginsWrapper : IPluginsWrapper
 
     public PluginsWrapper(IEnumerable<IPlugin> plugins, ILogger<PluginsWrapper> logger)
     {
-        _logger = logger;
-        _plugins = plugins.ToList();
-        _logger.LogInformation($"{_plugins.Count} plugins loaded");
+        this._logger = logger;
+        this._plugins = plugins.ToList();
+        this._logger.LogInformation($"{this._plugins.Count} plugins loaded");
     }
 
-    public IEnumerable<IPlugin> Plugins => _plugins;
+    public IEnumerable<IPlugin> Plugins => this._plugins;
 }

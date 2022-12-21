@@ -16,10 +16,10 @@ public class Worker : IHostedService
         ILogger<Worker> logger,
         IOptions<StartUpOptions> options)
     {
-        _pluginLoader = pluginLoader;
-        _pluginMigrator = pluginMigrator;
-        _logger = logger;
-        _options = options.Value;
+        this._pluginLoader = pluginLoader;
+        this._pluginMigrator = pluginMigrator;
+        this._logger = logger;
+        this._options = options.Value;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ public class Worker : IHostedService
             {
                 this._logger.LogInformation("Program will start");
 
-                var pluginRunner = (_options.ShouldRunMigrationPathway) ? _pluginMigrator : _pluginLoader;
+                IPluginLoader pluginRunner = (this._options.ShouldRunMigrationPathway) ? this._pluginMigrator : this._pluginLoader;
 
                 await pluginRunner.StartPlugins();
 
@@ -38,12 +38,12 @@ public class Worker : IHostedService
         }
         catch (Exception ex)
         {
-            _logger.LogWarning($"{{@ex}}", ex);
+            this._logger.LogWarning($"{{@ex}}", ex);
 
-            var innerException = ex.InnerException;
+            Exception? innerException = ex.InnerException;
             while (innerException != null)
             {
-                _logger.LogWarning($"{{@innerException}}", innerException);
+                this._logger.LogWarning($"{{@innerException}}", innerException);
 
                 innerException = innerException.InnerException;
             }
@@ -58,7 +58,7 @@ public class Worker : IHostedService
             {
                 this._logger.LogInformation("Program will start");
 
-                var pluginRunner = (_options.ShouldRunMigrationPathway) ? _pluginMigrator : _pluginLoader;
+                IPluginLoader pluginRunner = (this._options.ShouldRunMigrationPathway) ? this._pluginMigrator : this._pluginLoader;
 
                 await pluginRunner.StopPlugins();
 
@@ -67,12 +67,12 @@ public class Worker : IHostedService
         }
         catch (Exception ex)
         {
-            _logger.LogWarning($"{{@ex}}", ex);
+            this._logger.LogWarning($"{{@ex}}", ex);
 
-            var innerException = ex.InnerException;
+            Exception? innerException = ex.InnerException;
             while (innerException != null)
             {
-                _logger.LogWarning($"{{@innerException}}", innerException);
+                this._logger.LogWarning($"{{@innerException}}", innerException);
 
                 innerException = innerException.InnerException;
             }

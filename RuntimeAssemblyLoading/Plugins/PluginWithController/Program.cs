@@ -1,6 +1,6 @@
 using PluginWithController;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IMvcBuilder mvcBuilder = builder.Services.AddControllersWithViews();
 // Add services to the container.
 
@@ -9,9 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Register(builder.Configuration, mvcBuilder);
+builder.Services.Register(mvcBuilder);
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -20,7 +20,7 @@ public static class ServiceRegistrations
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-        var mvcBuilder = services.AddMvc(c =>
+        IMvcBuilder mvcBuilder = services.AddMvc(c =>
         {
             c.SuppressAsyncSuffixInActionNames = false;
         })
@@ -53,26 +53,26 @@ public static class ServiceRegistrations
 
     public static void LoadDependencies(this IServiceCollection services, IConfiguration configuration, IMvcBuilder mvcBuilder)
     {
-        var currentAssembly = Assembly.GetCallingAssembly();
+        Assembly currentAssembly = Assembly.GetCallingAssembly();
 
-        var assemblyPath = currentAssembly.Location.Replace(currentAssembly.ManifestModule.Name, string.Empty);
+        string assemblyPath = currentAssembly.Location.Replace(currentAssembly.ManifestModule.Name, string.Empty);
 
-        var pluginNames = configuration.GetSection("appSettings:plugins").Get<string[]>();
+        string[] pluginNames = configuration.GetSection("appSettings:plugins").Get<string[]>();
 
         if (pluginNames == null || !pluginNames.Any())
         {
-            throw new Exception("appSettings must define a plugin section listing all plugins to load");
+            throw new("appSettings must define a plugin section listing all plugins to load");
         }
 
-        foreach (var pluginName in pluginNames)
+        foreach (string pluginName in pluginNames)
         {
-            var assemblyLoader = new AssemblyLoader(assemblyPath, pluginName);
+            AssemblyLoader assemblyLoader = new(assemblyPath, pluginName);
             assemblyLoader.RegisterDependenciesFromAssembly(services, configuration);
 
-            var pluginRegistrantTypeName = assemblyLoader.Assembly!.GetTypes()
+            string? pluginRegistrantTypeName = assemblyLoader.Assembly!.GetTypes()
                 .Single(t => t.GetInterfaces().Any(i => i.Name == nameof(IRegistrant))).FullName;
 
-            var pluginRegistrant = assemblyLoader.Assembly.CreateInstance<IRegistrant>(pluginRegistrantTypeName!);
+            IRegistrant pluginRegistrant = assemblyLoader.Assembly.CreateInstance<IRegistrant>(pluginRegistrantTypeName!);
 
             pluginRegistrant.Register(mvcBuilder, configuration); // create services the host doesn't know about
         }
@@ -84,8 +84,8 @@ public static class ServiceRegistrations
     {
         if (parmArray.Length > 0)
         {
-            var culture = Thread.CurrentThread.CurrentCulture;
-            var activationAttrs = Array.Empty<object>();
+            System.Globalization.CultureInfo culture = Thread.CurrentThread.CurrentCulture;
+            object[] activationAttrs = Array.Empty<object>();
             return assembly.CreateInstance(typeName, false, BindingFlags.CreateInstance, null, parmArray, culture, activationAttrs)!;
         }
         else

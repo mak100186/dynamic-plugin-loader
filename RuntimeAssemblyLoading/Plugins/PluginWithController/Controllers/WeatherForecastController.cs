@@ -16,8 +16,8 @@ namespace PluginWithController.Controllers
 
         public WeatherForecastController(ILogger<WeatherForecastController> logger, IPluginApiService service)
         {
-            _logger = logger;
-            _service = service;
+            this._logger = logger;
+            this._service = service;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -35,7 +35,7 @@ namespace PluginWithController.Controllers
         [HttpGet("dumb")]
         public IActionResult UseService()
         {
-            return Ok(_service.Print("dumb"));
+            return this.Ok(this._service.Print("dumb"));
         }
     }
 }

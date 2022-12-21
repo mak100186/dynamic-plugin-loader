@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
 using PluginBase.Abstractions;
 using PluginBase.Concrete;
 using PluginBase.Enums;
@@ -13,9 +14,7 @@ public class Main : IPlugin, INotificationReceiver
     private readonly ILogger _logger;
 
     public string UniqueIdentifier => $"PostGreSQL";
-
-    public IServiceProvider ServiceProvider { get; set; } = null!;
-
+    
     public PluginState State { get; private set; }
 
     private readonly IDemoService _demoService;
@@ -37,7 +36,7 @@ public class Main : IPlugin, INotificationReceiver
         this._logger.LogInformation($"{this.UniqueIdentifier} migrating");
         this._logger.LogInformation(this._demoService.DoWork(this.UniqueIdentifier));
 
-        await OnMigrateComplete();
+        await this.OnMigrateComplete();
     }
 
     public async Task OnMigrateComplete()
@@ -52,7 +51,8 @@ public class Main : IPlugin, INotificationReceiver
             From = this.UniqueIdentifier,
             Action = "Migration Completed"
         });
-
+        
+        await Task.CompletedTask;
     }
 
     public async Task OnStarted()
@@ -61,6 +61,7 @@ public class Main : IPlugin, INotificationReceiver
 
         this._logger.LogInformation($"{this.UniqueIdentifier} has started");
 
+        await Task.CompletedTask;
     }
 
     public async Task OnStopped()
@@ -68,7 +69,8 @@ public class Main : IPlugin, INotificationReceiver
         this.State = PluginState.Stopped;
 
         this._logger.LogInformation($"{this.UniqueIdentifier} has stopped");
-
+        
+        await Task.CompletedTask;
     }
 
     public async Task Start()
@@ -78,7 +80,7 @@ public class Main : IPlugin, INotificationReceiver
         this._logger.LogInformation($"{this.UniqueIdentifier} is starting");
         this._logger.LogInformation(this._demoService.DoWork(this.UniqueIdentifier));
 
-        await OnStarted();
+        await this.OnStarted();
     }
 
     public async Task Stop()
@@ -87,12 +89,12 @@ public class Main : IPlugin, INotificationReceiver
 
         this._logger.LogInformation($"{this.UniqueIdentifier} is stopping");
 
-        await OnStopped();
+        await this.OnStopped();
     }
 
-    public void Receive(Notification notification)
+    public void Receive(BaseNotification baseNotification)
     {
-        this._logger.LogInformation($"Notification  intended for {notification.To} received by {this.UniqueIdentifier} for action {notification.Action} sent by {notification.From}");
+        this._logger.LogInformation($"BaseNotification  intended for {baseNotification.To} received by {this.UniqueIdentifier} for action {baseNotification.Action} sent by {baseNotification.From}");
     }
 }
 

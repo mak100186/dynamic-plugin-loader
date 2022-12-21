@@ -8,14 +8,14 @@ public class Registrant : IRegistrant
 {
     public IMvcBuilder Register(IMvcBuilder mvcBuilder, IConfiguration? config)
     {
-        StaticRegistrant.Register(mvcBuilder.Services, config, mvcBuilder);
+        mvcBuilder.Services.Register(mvcBuilder);
         return mvcBuilder;
     }
 }
 
 public static class StaticRegistrant
 {
-    public static IServiceCollection Register(this IServiceCollection services, IConfiguration config, IMvcBuilder mvcBuilder)
+    public static IServiceCollection Register(this IServiceCollection services, IMvcBuilder mvcBuilder)
     {
         mvcBuilder.AddModule(typeof(Registrant));
 

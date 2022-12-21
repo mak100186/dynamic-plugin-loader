@@ -9,13 +9,13 @@ public abstract class BasePluginLoader
 
     public BasePluginLoader(ILogger logger, IPluginsWrapper plugins)
     {
-        _logger = logger;
-        _plugins = plugins;
+        this._logger = logger;
+        this._plugins = plugins;
     }
 
     public async Task StopPlugins()
     {
-        foreach (var plugin in _plugins.Plugins)
+        foreach (IPlugin plugin in this._plugins.Plugins)
         {
             await plugin.Stop();
         }
@@ -25,7 +25,7 @@ public abstract class BasePluginLoader
     {
         await Task.CompletedTask;
 
-        return _plugins.Plugins.Count();
+        return this._plugins.Plugins.Count();
     }
 
     public async Task<bool> IsEmpty()

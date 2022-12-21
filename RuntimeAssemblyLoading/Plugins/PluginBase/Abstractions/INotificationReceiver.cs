@@ -4,5 +4,5 @@ namespace PluginBase.Abstractions;
 
 public interface INotificationReceiver
 {
-    void Receive(Notification notification);
+    void Receive(BaseNotification baseNotification);
 }

@@ -11,7 +11,7 @@ public class PluginMigrator : BasePluginLoader, IPluginMigrator
 
     public override async Task StartPlugins()
     {
-        foreach (var pluginContext in _plugins.Plugins)
+        foreach (IPlugin pluginContext in this._plugins.Plugins)
         {
             await pluginContext.Migrate();
         }

@@ -14,9 +14,9 @@ public class Main : IPlugin, INotificationReceiver
         INotificationManager notificationManager,
         IPluginApiService service)
     {
-        _logger = logger;
-        _service = service;
-        _notificationManager = notificationManager;
+        this._logger = logger;
+        this._service = service;
+        this._notificationManager = notificationManager;
     }
 
     public string UniqueIdentifier => "PluginWithApi";
@@ -31,7 +31,7 @@ public class Main : IPlugin, INotificationReceiver
 
         this._logger.LogInformation($"{this.UniqueIdentifier} migrating");
 
-        await OnMigrateComplete();
+        await this.OnMigrateComplete();
     }
 
     public async Task OnMigrateComplete()
@@ -40,7 +40,7 @@ public class Main : IPlugin, INotificationReceiver
 
         this._logger.LogInformation($"{this.UniqueIdentifier} has migrated");
 
-        _service.Print(this.UniqueIdentifier);
+        this._service.Print(this.UniqueIdentifier);
 
         this._notificationManager.Send(new Notification()
         {
@@ -56,6 +56,7 @@ public class Main : IPlugin, INotificationReceiver
 
         this._logger.LogInformation($"{this.UniqueIdentifier} has started");
 
+        await Task.CompletedTask;
     }
 
     public async Task OnStopped()
@@ -63,6 +64,8 @@ public class Main : IPlugin, INotificationReceiver
         this.State = PluginState.Stopped;
 
         this._logger.LogInformation($"{this.UniqueIdentifier} has stopped");
+        
+        await Task.CompletedTask;
     }
 
     public async Task Start()
@@ -71,7 +74,7 @@ public class Main : IPlugin, INotificationReceiver
 
         this._logger.LogInformation($"{this.UniqueIdentifier} is starting");
 
-        await OnStarted();
+        await this.OnStarted();
     }
 
     public async Task Stop()
@@ -80,11 +83,11 @@ public class Main : IPlugin, INotificationReceiver
 
         this._logger.LogInformation($"{this.UniqueIdentifier} is stopping");
 
-        await OnStopped();
+        await this.OnStopped();
     }
 
-    public void Receive(Notification notification)
+    public void Receive(BaseNotification baseNotification)
     {
-        this._logger.LogInformation($"Notification  intended for {notification.To} received by {this.UniqueIdentifier} for action {notification.Action} sent by {notification.From}");
+        this._logger.LogInformation($"BaseNotification  intended for {baseNotification.To} received by {this.UniqueIdentifier} for action {baseNotification.Action} sent by {baseNotification.From}");
     }
 }

@@ -37,7 +37,7 @@ public class NotNamedMain : IPlugin, INotificationReceiver
             Action = "Migration Started"
         });
 
-        await OnMigrateComplete();
+        await this.OnMigrateComplete();
     }
 
     public async Task OnMigrateComplete()
@@ -74,7 +74,7 @@ public class NotNamedMain : IPlugin, INotificationReceiver
 
         this._logger.LogInformation($"{this.UniqueIdentifier} is starting");
 
-        await OnStarted();
+        await this.OnStarted();
     }
 
     public async Task Stop()
@@ -83,12 +83,12 @@ public class NotNamedMain : IPlugin, INotificationReceiver
 
         this._logger.LogInformation($"{this.UniqueIdentifier} is stopping");
 
-        await OnStopped();
+        await this.OnStopped();
     }
 
-    public void Receive(Notification notification)
+    public void Receive(BaseNotification baseNotification)
     {
-        this._logger.LogInformation($"Notification  intended for {notification.To} received by {this.UniqueIdentifier} for action {notification.Action} sent by {notification.From}");
+        this._logger.LogInformation($"BaseNotification  intended for {baseNotification.To} received by {this.UniqueIdentifier} for action {baseNotification.Action} sent by {baseNotification.From}");
     }
 }
 
